@@ -23,9 +23,11 @@ export function Header() {
                     </Link>
                 </div>
 
-                <Button className="bg-[#4338CA] text-white">
-                    LOGIN
-                </Button>
+                <Link href="/sign-in">
+                    <Button className="bg-[#4338CA] text-white">
+                        LOGIN
+                    </Button>
+                </Link>
             </nav>
         </header>
     )

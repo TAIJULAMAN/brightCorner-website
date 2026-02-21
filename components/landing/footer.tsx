@@ -34,8 +34,8 @@ export function Footer() {
                         </h4>
                         <ul className="space-y-2">
                             <li><Link href="#" className="text-sm text-neutral-600 hover:text-neutral-900">Legal</Link></li>
-                            <li><Link href="#" className="text-sm text-neutral-600 hover:text-neutral-900">Privacy</Link></li>
-                            <li><Link href="#" className="text-sm text-neutral-600 hover:text-neutral-900">Terms</Link></li>
+                            <li><Link href="/privacy" className="text-sm text-neutral-600 hover:text-neutral-900">Privacy</Link></li>
+                            <li><Link href="/terms" className="text-sm text-neutral-600 hover:text-neutral-900">Terms</Link></li>
                         </ul>
                     </div>
 
