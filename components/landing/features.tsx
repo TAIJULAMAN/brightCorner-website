@@ -28,7 +28,7 @@ export function Features() {
                 {features.map((feature) => (
                     <div
                         key={feature.number}
-                        className="grid grid-cols-[4rem_1fr_1fr] md:grid-cols-[6rem_1fr_1fr] items-start gap-8 py-10 group"
+                        className="px-5 md:px-0 grid grid-cols-[4rem_1fr_1fr] md:grid-cols-[6rem_1fr_1fr] items-start gap-8 py-10 group"
                     >
                         {/* Large faded number */}
                         <span className="text-4xl md:text-5xl font-extralight text-neutral-200 group-hover:text-cyan-100 transition-colors leading-none pt-1">

@@ -12,20 +12,20 @@ export const metadata: Metadata = {
   generator: 'AMAN',
   icons: {
     icon: [
-      // {
-      //   url: '/logo.png',
-      //   media: '(prefers-color-scheme: light)',
-      // },
-      // {
-      //   url: '/logo.png',
-      //   media: '(prefers-color-scheme: dark)',
-      // },
-      // {
-      //   url: '/logo.png',
-      //   type: 'image/png',
-      // },
+      {
+        url: '/logo2.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/logo2.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/logo2.png',
+        type: 'image/png',
+      },
     ],
-    apple: '/logo.png',
+    apple: '/logo2.png',
   },
 }
 

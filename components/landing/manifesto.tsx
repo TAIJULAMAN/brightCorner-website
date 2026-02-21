@@ -2,7 +2,7 @@
 
 export function Manifesto() {
     return (
-        <section className="py-10">
+        <section id="manifesto" className="py-10">
             <div className="bg-neutral-950 py-28 px-6 text-center">
                 <p className="text-xs text-neutral-500 tracking-widest uppercase mb-10">
                     05 — MANIFESTO

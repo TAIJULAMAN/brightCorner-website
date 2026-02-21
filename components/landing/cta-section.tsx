@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export function CTASection() {
     return (
-        <section className="py-10">
+        <section id="access" className="py-10">
             <div className="text-center">
                 <p className="text-xs text-neutral-400 tracking-widest uppercase mb-8">
                     06 — ACCESS

@@ -9,7 +9,7 @@ const organizations = [
 
 export function TrustedBy() {
     return (
-        <section className="py-10">
+        <section className="py-10 px-5 md:px-0">
             {/* Header row */}
             <div className="flex items-end justify-between mb-12">
                 <h2 className="text-4xl md:text-5xl font-extralight text-neutral-900">
