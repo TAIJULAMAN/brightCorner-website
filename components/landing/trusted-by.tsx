@@ -1,37 +1,37 @@
 'use client'
 
+const organizations = [
+    { number: '01', name: 'Global Finance' },
+    { number: '02', name: 'Legal Counsel' },
+    { number: '03', name: 'Investigative Journalism' },
+    { number: '04', name: 'Executive Leadership' },
+]
+
 export function TrustedBy() {
-    const organizations = [
-        'Global Finance',
-        'Legal Counsel',
-        'Investigative Journalism',
-        'Executive Leadership'
-    ]
-
     return (
-        <section className="py-16 px-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-light text-neutral-900 mb-2">
-                        Trusted By
-                    </h2>
-                    <p className="text-sm text-neutral-500 tracking-wider">
-                        SELECT ORGANIZATIONS
-                    </p>
-                </div>
+        <section className="py-10">
+            {/* Header row */}
+            <div className="flex items-end justify-between mb-12">
+                <h2 className="text-4xl md:text-5xl font-extralight text-neutral-900">
+                    Trusted By
+                </h2>
+                <p className="text-xs text-neutral-400 tracking-widest uppercase">
+                    SELECT ORGANIZATIONS
+                </p>
+            </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    {organizations.map((org, index) => (
-                        <div
-                            key={index}
-                            className="flex items-center justify-center p-8 border border-neutral-200 rounded-lg hover:border-neutral-300 transition"
-                        >
-                            <p className="text-sm font-medium text-neutral-700 text-center">
-                                {org}
+            {/* Columns */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                {organizations.map((org) => (
+                    <div key={org.number}>
+                        <p className="text-xs text-neutral-400 mb-3">{org.number}</p>
+                        <div className="border-t border-neutral-200 pt-4">
+                            <p className="text-sm font-light text-neutral-800">
+                                {org.name}
                             </p>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </section>
     )
