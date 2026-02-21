@@ -5,6 +5,7 @@ import { QuoteSection } from "@/components/landing/quote-section";
 import { TrustedBy } from "@/components/landing/trusted-by";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
+import { Picture } from "@/components/landing/picture";
 
 export default function LandingPage() {
     return (
@@ -12,6 +13,7 @@ export default function LandingPage() {
             <Header />
             <main className="container mx-auto">
                 <Hero />
+                <Picture />
                 <Features />
                 <QuoteSection />
                 <TrustedBy />

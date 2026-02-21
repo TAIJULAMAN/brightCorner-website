@@ -1,49 +1,41 @@
 'use client'
 
-import Image from 'next/image'
-
 export function Hero() {
     return (
-        <section className="pt-32 pb-16 px-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <p className="text-sm text-cyan-500 font-semibold tracking-wider mb-4">
-                            01 — INTRODUCTION
-                        </p>
-                        <h1 className="text-5xl md:text-6xl font-light text-cyan-500 mb-4 text-balance">
-                            Silence
-                        </h1>
-                        <p className="text-4xl md:text-5xl font-light text-neutral-400 mb-8">
-                            is the ultimate luxury.
-                        </p>
+        <section className="py-24 md:py-32">
+            <div className="container mx-auto px-5 md:px-0">
 
-                        <p className="text-base text-neutral-600 leading-relaxed mb-8 max-w-sm">
-                            We built BrightCorner for those who understand that true privacy is not about having something to hide, but about having something to protect.
-                        </p>
+                {/* Label */}
+                <p className="text-xs text-neutral-400 tracking-widest uppercase mb-6">
+                    01 — INTRODUCTION
+                </p>
 
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm text-neutral-500">Encryption Standard</span>
-                                <span className="text-sm font-semibold text-neutral-900">P-521 ECC</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm text-neutral-500">Architecture</span>
-                                <span className="text-sm font-semibold text-neutral-900">Zero-Knowledge</span>
-                            </div>
+                {/* Large heading */}
+                <h1 className="text-[clamp(4rem,12vw,9rem)] font-extralight leading-none text-cyan-400 mb-2">
+                    Silence
+                </h1>
+                <p className="text-[clamp(3rem,10vw,7.5rem)] font-extralight leading-none text-neutral-300 mb-16">
+                    is the ultimate luxury.
+                </p>
+
+                {/* Bottom row: description left, specs right */}
+                <div className="grid md:grid-cols-2 gap-12 items-start">
+                    <p className="text-base text-neutral-600 leading-relaxed max-w-sm">
+                        We built BrightCorner for those who understand that true privacy is not about having something to hide, but about having something to protect.
+                    </p>
+
+                    <div className="divide-y divide-neutral-200">
+                        <div className="flex justify-between items-center py-4">
+                            <span className="text-sm text-neutral-400">Encryption Standard</span>
+                            <span className="text-sm font-semibold text-neutral-900">P-521 ECDH</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4">
+                            <span className="text-sm text-neutral-400">Architecture</span>
+                            <span className="text-sm font-semibold text-neutral-900">Zero-Knowledge</span>
                         </div>
                     </div>
-
-                    <div className="relative aspect-square">
-                        <Image
-                            src="/hero-woman.jpg"
-                            alt="Privacy-focused communication"
-                            fill
-                            className="object-cover rounded-lg"
-                            priority
-                        />
-                    </div>
                 </div>
+
             </div>
         </section>
     )

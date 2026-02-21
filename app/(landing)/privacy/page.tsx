@@ -20,10 +20,7 @@ export default function PrivacyPolicyPage() {
     return (
         <div className="min-h-screen bg-white">
             <Header />
-
-
             <div className="max-w-3xl mx-auto px-6 py-16">
-
                 {/* Top bar */}
                 <div className="py-10 flex justify-center">
                     <span className="inline-flex items-center gap-2 bg-neutral-100 text-neutral-500 text-xs font-medium px-4 py-2 rounded-full">
