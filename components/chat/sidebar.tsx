@@ -1,8 +1,9 @@
 'use client'
 
-import { Search, Plus, Settings, Hash, User } from 'lucide-react'
+import { Search, Plus, Settings, Hash, User, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { useChat } from '@/context/chat-context'
+import Image from 'next/image'
 
 export function Sidebar() {
     const { chats, activeChatId, setActiveChatId } = useChat()
@@ -13,11 +14,13 @@ export function Sidebar() {
             {/* Header */}
             <div className="p-6">
                 <div className="flex items-center gap-2 mb-6">
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
-                        <div className="w-4 h-4 text-white">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v19M5 8l7-5 7 5M5 16l7 5 7-5" /></svg>
-                        </div>
-                    </div>
+                    <Image
+                        src="/logo2.png"
+                        alt="BrightCorner Logo"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                    />
                     <span className="font-bold text-neutral-900 tracking-tight">BrightCorner</span>
                 </div>
 
@@ -87,16 +90,21 @@ export function Sidebar() {
                                 </div>
                                 <div className="flex-1 text-left min-w-0">
                                     <div className="flex items-center justify-between mb-0.5">
-                                        <span className={`text-sm font-semibold truncate ${activeChatId === chat.id ? 'text-indigo-900' : 'text-neutral-900'}`}>
-                                            {chat.name}
-                                        </span>
+                                        <div className="flex items-center gap-1.5 truncate">
+                                            <span className={`text-sm font-semibold truncate ${activeChatId === chat.id ? 'text-indigo-900' : 'text-neutral-900'}`}>
+                                                {chat.name}
+                                            </span>
+                                            {!chat.isPublic && chat.type === 'channel' && (
+                                                <Lock size={12} className="text-neutral-400 shrink-0" />
+                                            )}
+                                        </div>
                                         <span className="text-[10px] text-neutral-400">{chat.time}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs text-neutral-500 truncate pr-2">
-                                            {chat.lastMessage}
+                                            {chat.joinStatus === 'pending' ? 'Access requested...' : chat.lastMessage}
                                         </p>
-                                        {chat.unread > 0 && (
+                                        {chat.unread > 0 && chat.joinStatus === 'joined' && (
                                             <div className="bg-cyan-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                                                 {chat.unread}
                                             </div>

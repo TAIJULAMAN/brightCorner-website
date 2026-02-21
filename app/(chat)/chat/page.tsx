@@ -5,7 +5,7 @@ export default function ChatPage() {
     return (
         <div className="flex flex-1 h-full overflow-hidden">
             <ChatArea />
-            <DetailsPanel />
+            {/* <DetailsPanel /> */}
         </div>
     )
 }
