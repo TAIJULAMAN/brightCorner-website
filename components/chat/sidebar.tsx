@@ -4,6 +4,7 @@ import { Search, Plus, Settings, Hash, User, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { useChat } from '@/context/chat-context'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export function Sidebar() {
     const { chats, activeChatId, setActiveChatId } = useChat()
@@ -119,9 +120,22 @@ export function Sidebar() {
             {/* Actions */}
             {activeTab === 'channels' && (
                 <div className="p-4 bg-white border-t border-neutral-100">
-                    <button className="w-full flex items-center justify-center gap-2 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
-                        <Plus size={18} />
-                        Create Channel
+                    <Link href="/create-channel">
+                        <button className="w-full flex items-center justify-center gap-2 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
+                            <Plus size={18} />
+                            Create Channel
+                        </button>
+                    </Link>
+                </div>
+            )}
+
+            {activeTab === 'dms' && (
+                <div className="p-4 bg-white border-t border-neutral-100">
+                    <button className="w-full flex items-center justify-center gap-3 py-3.5 bg-indigo-600 rounded-2xl text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]">
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm">
+                            <Plus size={16} className="text-indigo-600 stroke-[3]" />
+                        </div>
+                        New Message
                     </button>
                 </div>
             )}
