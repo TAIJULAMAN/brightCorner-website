@@ -131,10 +131,8 @@ export function Sidebar() {
 
             {activeTab === 'dms' && (
                 <div className="p-4 bg-white border-t border-neutral-100">
-                    <button className="w-full flex items-center justify-center gap-3 py-3.5 bg-indigo-600 rounded-2xl text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]">
-                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm">
-                            <Plus size={16} className="text-indigo-600 stroke-[3]" />
-                        </div>
+                    <button className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
+                        <Plus size={18} />
                         New Message
                     </button>
                 </div>

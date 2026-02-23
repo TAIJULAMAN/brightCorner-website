@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
+    const router = useRouter()
     return (
         <div className="min-h-screen grid md:grid-cols-2">
             {/* Left — Brand Panel */}
@@ -35,7 +37,13 @@ export default function SignInPage() {
                     <h2 className="text-4xl font-light text-neutral-900 mb-2">Sign In</h2>
                     <p className="text-sm text-neutral-500 mb-10">Enter your credentials to access your account.</p>
 
-                    <form className="space-y-6">
+                    <form
+                        className="space-y-6"
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            router.push('/onboarding')
+                        }}
+                    >
                         <div>
                             <label className="block text-xs font-semibold text-neutral-500 tracking-widest uppercase mb-2">
                                 Email or Username
