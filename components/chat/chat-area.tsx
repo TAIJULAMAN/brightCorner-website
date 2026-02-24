@@ -33,13 +33,31 @@ const initialMessages = [
 ]
 
 export function ChatArea() {
-    const { activeChat, chats } = useChat()
+    const { activeChat, chats, setActiveChatId } = useChat()
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState(initialMessages)
     const [showPins, setShowPins] = useState(false)
     const [showDetails, setShowDetails] = useState(false)
 
-    if (!activeChat) return null
+    if (!activeChat) {
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center bg-neutral-50/30 p-12 text-center animate-in fade-in duration-700">
+                <div className="w-24 h-24 bg-white rounded-[40px] flex items-center justify-center text-indigo-100 shadow-2xl shadow-neutral-200/50 mb-8 border border-neutral-100/50">
+                    <Lock size={40} strokeWidth={1} />
+                </div>
+                <h3 className="text-xl font-light text-neutral-900 mb-3 tracking-tight">Select a Secure Channel</h3>
+                <p className="text-sm text-neutral-400 max-w-xs leading-relaxed font-medium mb-10">
+                    Your conversations are end-to-end encrypted and decentralized across the BrightCorner network.
+                </p>
+                <div className="flex gap-4">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-neutral-100 shadow-sm">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <span className="text-[10px] font-black text-neutral-900 uppercase tracking-widest">Network Secure</span>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     const isJoined = activeChat.joinStatus === 'joined'
 
@@ -47,9 +65,17 @@ export function ChatArea() {
         <div className="flex-1 h-full flex overflow-hidden">
             <main className="flex-1 h-full flex flex-col bg-neutral-50/30 relative overflow-hidden">
                 {/* Header */}
-                <header className="h-16 border-b border-neutral-200 bg-white px-6 flex items-center justify-between shrink-0 z-20">
+                <header className="h-16 border-b border-neutral-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0 z-20">
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setActiveChatId(null)}
+                                className="md:hidden -ml-2 text-neutral-400 hover:text-indigo-600 rounded-xl"
+                            >
+                                <ChevronRight size={24} className="rotate-180" />
+                            </Button>
                             <Avatar className="w-8 h-8 rounded-lg">
                                 <AvatarImage src={`https://api.dicebear.com/7.x/identicon/svg?seed=${activeChat.name}`} />
                                 <AvatarFallback className="bg-indigo-50 text-indigo-600 text-[10px] font-bold">
@@ -69,7 +95,7 @@ export function ChatArea() {
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-1.5 ml-4">
+                    <div className="flex items-center gap-1 ml-4 sm:gap-1.5">
                         <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-neutral-600 rounded-xl h-9 w-9">
                             <Phone size={18} />
                         </Button>
@@ -311,7 +337,7 @@ export function ChatArea() {
 
             {/* Right Sidebar - Thread/Details */}
             {showDetails && (activeChat as any) && (
-                <aside className="w-85 h-full bg-white border-l border-neutral-200 flex flex-col shrink-0 animate-in slide-in-from-right duration-500 z-30 shadow-2xl">
+                <aside className="fixed inset-0 z-50 md:static md:w-85 h-full bg-white md:border-l border-neutral-200 flex flex-col shrink-0 animate-in slide-in-from-right duration-500 shadow-2xl md:shadow-none">
                     <header className="h-16 border-b border-neutral-200 px-6 flex items-center justify-between shrink-0 bg-white/80 backdrop-blur-md">
                         <h3 className="font-bold text-neutral-900 text-[11px] uppercase tracking-[0.2em] italic">Knowledge Base</h3>
                         <Button variant="ghost" size="icon" onClick={() => setShowDetails(false)} className="text-neutral-400 hover:text-neutral-600 rounded-xl h-8 w-8">

@@ -78,19 +78,20 @@ export default function NotificationsPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm sticky top-0 z-20">
-                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm sticky top-0 z-20 shrink-0">
+                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors relative z-10">
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Notifications</h1>
+                <h1 className="text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-24 pointer-events-none">Notifications</h1>
                 <Button
                     variant="ghost"
                     size="sm"
                     onClick={markAllAsRead}
-                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 text-xs font-bold transition-colors flex items-center gap-1.5 h-8"
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 text-xs font-bold transition-colors flex items-center gap-1.5 h-8 relative z-10"
                 >
                     <Check size={14} />
-                    Mark all read
+                    <span className="hidden sm:inline">Mark all read</span>
+                    <span className="sm:hidden">Read all</span>
                 </Button>
             </header>
 
@@ -102,8 +103,8 @@ export default function NotificationsPage() {
                             <div
                                 key={notification.id}
                                 className={`group relative p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex gap-4 ${notification.isRead
-                                        ? 'bg-white border-neutral-100 hover:border-neutral-200 shadow-sm'
-                                        : 'bg-indigo-50/50 border-indigo-100/50 shadow-md shadow-indigo-100/10'
+                                    ? 'bg-white border-neutral-100 hover:border-neutral-200 shadow-sm'
+                                    : 'bg-indigo-50/50 border-indigo-100/50 shadow-md shadow-indigo-100/10'
                                     }`}
                             >
                                 {/* Unread Indicator */}

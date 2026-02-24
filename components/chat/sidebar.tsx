@@ -11,7 +11,7 @@ export function Sidebar() {
     const [activeTab, setActiveTab] = useState('channels')
     const [searchQuery, setSearchQuery] = useState('')
     return (
-        <aside className="w-80 h-full bg-white border-r border-neutral-200 flex flex-col">
+        <aside className="w-full h-full bg-white md:border-r border-neutral-200 flex flex-col">
             {/* Header */}
             <div className="p-6">
                 <Link href="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
@@ -120,22 +120,24 @@ export function Sidebar() {
             {/* Actions */}
             {activeTab === 'channels' && (
                 <div className="p-4 bg-white border-t border-neutral-100">
-                    <Link href="/create-channel">
-                        <button className="w-full flex items-center justify-center gap-2 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
-                            <Plus size={18} />
-                            Create Channel
-                        </button>
+                    <Link
+                        href="/create-channel"
+                        className="w-full flex items-center justify-center gap-2 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors"
+                    >
+                        <Plus size={18} />
+                        Create Channel
                     </Link>
                 </div>
             )}
 
             {activeTab === 'dms' && (
                 <div className="p-4 bg-white border-t border-neutral-100">
-                    <Link href="/new-message">
-                        <button className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
-                            <Plus size={18} />
-                            New Message
-                        </button>
+                    <Link
+                        href="/new-message"
+                        className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors"
+                    >
+                        <Plus size={18} />
+                        New Message
                     </Link>
                 </div>
             )}
@@ -155,10 +157,11 @@ export function Sidebar() {
                         <p className="text-[10px] text-neutral-400">Online</p>
                     </div>
                 </div>
-                <Link href="/chat-settings">
-                    <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
-                        <Settings size={18} />
-                    </button>
+                <Link
+                    href="/chat-settings"
+                    className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                >
+                    <Settings size={18} />
                 </Link>
             </div>
         </aside>

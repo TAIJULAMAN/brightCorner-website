@@ -20,23 +20,23 @@ export default function PrivacySettingsPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
-                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm relative shrink-0">
+                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors relative z-10">
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Privacy Settings</h1>
-                <div className="w-5" />
+                <h1 className="text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-12 pointer-events-none">Privacy Settings</h1>
+                <div className="w-8 relative z-10" />
             </header>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-8">
-                <div className="max-w-xl mx-auto space-y-8">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold text-neutral-900">Privacy Settings</h2>
+                <div className="max-w-xl mx-auto space-y-6 md:space-y-8">
+                    <div className="space-y-2 text-center sm:text-left">
+                        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">Privacy Settings</h2>
                         <p className="text-sm text-neutral-500">Manage how others interact with you and control your visibility.</p>
                     </div>
 
-                    <div className="bg-white rounded-3xl border border-neutral-100 p-8 shadow-sm space-y-8">
+                    <div className="bg-white rounded-2xl md:rounded-3xl border border-neutral-100 p-5 md:p-8 shadow-sm space-y-6 md:space-y-8">
                         {/* Who can message me */}
                         <div className="space-y-6">
                             <div className="space-y-1">

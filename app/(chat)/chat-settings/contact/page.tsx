@@ -19,12 +19,12 @@ export default function ContactUsPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
-                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm relative shrink-0">
+                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors relative z-10">
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Contact Us</h1>
-                <div className="w-5" />
+                <h1 className="text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-12 pointer-events-none">Contact Us</h1>
+                <div className="w-8 relative z-10" />
             </header>
 
             {/* Content */}

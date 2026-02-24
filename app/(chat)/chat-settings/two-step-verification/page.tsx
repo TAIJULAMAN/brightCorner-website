@@ -18,22 +18,22 @@ export default function TwoStepVerificationPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
-                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm relative shrink-0">
+                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors relative z-10">
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Two-Step Verification</h1>
-                <div className="w-5" />
+                <h1 className="text-xs sm:text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-12 pointer-events-none">Two-Step Verification</h1>
+                <div className="w-8 relative z-10" />
             </header>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-8">
-                <div className="max-w-xl mx-auto space-y-12">
+                <div className="max-w-xl mx-auto space-y-8 md:space-y-12">
 
                     {/* Hero */}
-                    <div className="text-center space-y-4 pt-4">
-                        <h2 className="text-3xl font-bold text-neutral-900">Secure your account</h2>
-                        <p className="text-sm text-neutral-500 max-w-sm mx-auto leading-relaxed">
+                    <div className="text-center space-y-3 md:space-y-4 pt-2 md:pt-4">
+                        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">Secure your account</h2>
+                        <p className="text-sm text-neutral-500 max-w-sm mx-auto leading-relaxed px-4">
                             Protect your BrightCorner account with an extra layer of security. We'll send a code to verify it's really you.
                         </p>
                     </div>
@@ -73,20 +73,20 @@ export default function TwoStepVerificationPage() {
                             </Button>
                         </div>
 
-                        <div className="flex justify-center">
+                        <div className="flex justify-center overflow-hidden">
                             <InputOTP
                                 maxLength={6}
                                 value={otp}
                                 onChange={setOtp}
-                                containerClassName="gap-3 sm:gap-4"
+                                containerClassName="gap-2 sm:gap-3 md:gap-4"
                             >
-                                <InputOTPGroup className="gap-2 sm:gap-4">
-                                    <InputOTPSlot index={0} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
-                                    <InputOTPSlot index={1} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
-                                    <InputOTPSlot index={2} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
-                                    <InputOTPSlot index={3} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
-                                    <InputOTPSlot index={4} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
-                                    <InputOTPSlot index={5} className="w-12 h-16 sm:w-16 sm:h-20 rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-2xl font-bold shadow-sm" />
+                                <InputOTPGroup className="gap-1.5 sm:gap-3 md:gap-4">
+                                    <InputOTPSlot index={0} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
+                                    <InputOTPSlot index={1} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
+                                    <InputOTPSlot index={2} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
+                                    <InputOTPSlot index={3} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
+                                    <InputOTPSlot index={4} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
+                                    <InputOTPSlot index={5} className="w-10 h-14 sm:w-16 sm:h-20 rounded-xl sm:rounded-2xl border-none ring-1 ring-neutral-100 bg-white text-xl sm:text-2xl font-bold shadow-sm" />
                                 </InputOTPGroup>
                             </InputOTP>
                         </div>

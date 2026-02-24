@@ -56,13 +56,14 @@ export default function SettingsPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
-                <Link href="/chat" className="flex items-center gap-1 text-cyan-500 hover:text-cyan-600 transition-colors font-medium">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm relative shrink-0">
+                <Link href="/chat" className="flex items-center gap-1 text-cyan-500 hover:text-cyan-600 transition-colors font-medium relative z-10">
                     <ChevronLeft size={20} />
-                    <span>Chats</span>
+                    <span className="hidden sm:inline text-sm">Chats</span>
+                    <span className="sm:hidden text-sm">Back</span>
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Settings</h1>
-                <Link href="/chat" className="text-cyan-500 hover:text-cyan-600 transition-colors font-medium">
+                <h1 className="text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-16 pointer-events-none">Settings</h1>
+                <Link href="/chat" className="text-cyan-500 hover:text-cyan-600 transition-colors font-medium relative z-10 text-sm">
                     Done
                 </Link>
             </header>

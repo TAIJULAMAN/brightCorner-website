@@ -24,8 +24,8 @@ export interface Chat {
 
 interface ChatContextType {
     chats: Chat[]
-    activeChatId: number
-    setActiveChatId: (id: number) => void
+    activeChatId: number | null
+    setActiveChatId: (id: number | null) => void
     activeChat: Chat | undefined
     joinChannel: (chatId: number) => void
     submitJoinRequest: (chatId: number, data: any) => void
@@ -137,7 +137,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined)
 
 export function ChatProvider({ children }: { children: ReactNode }) {
     const [chats, setChats] = useState<Chat[]>(initialChatsData)
-    const [activeChatId, setActiveChatId] = useState(1)
+    const [activeChatId, setActiveChatId] = useState<number | null>(null)
 
     const activeChat = chats.find(chat => chat.id === activeChatId)
 

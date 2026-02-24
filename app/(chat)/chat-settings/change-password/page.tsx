@@ -15,20 +15,20 @@ export default function ChangePasswordPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
-                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors">
+            <header className="px-4 md:px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm relative shrink-0">
+                <Link href="/chat-settings" className="text-neutral-500 hover:text-neutral-700 transition-colors relative z-10">
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Change Password</h1>
-                <div className="w-5" />
+                <h1 className="text-sm md:text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2 w-full text-center px-12 pointer-events-none">Change Password</h1>
+                <div className="w-8 relative z-10" />
             </header>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
-                <div className="w-full max-w-md space-y-12 py-8">
+                <div className="w-full max-w-md space-y-8 md:space-y-12 py-4 md:py-8">
                     <div className="text-center space-y-3">
-                        <h2 className="text-3xl font-bold text-neutral-900 leading-tight">Change Password</h2>
-                        <p className="text-[10px] font-bold text-neutral-400 tracking-[0.2em] uppercase">
+                        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 leading-tight">Change Password</h2>
+                        <p className="text-[10px] font-bold text-neutral-400 tracking-[0.2em] uppercase px-4 leading-relaxed">
                             Secure your account with a strong password
                         </p>
                     </div>
