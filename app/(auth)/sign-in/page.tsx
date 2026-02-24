@@ -2,89 +2,127 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ArrowLeft, Lock, Mail, User } from 'lucide-react'
 
 export default function SignInPage() {
     const router = useRouter()
     return (
-        <div className="min-h-screen grid md:grid-cols-2">
+        <div className="min-h-screen grid md:grid-cols-2 bg-neutral-50/50">
             {/* Left — Brand Panel */}
-            <div className="hidden md:flex flex-col justify-center px-16 bg-white border-r border-neutral-100">
-                <p className="text-xs text-neutral-400 font-semibold tracking-widest uppercase mb-8">
-                    01 — Access Portal
-                </p>
-                <h1 className="text-5xl font-light text-neutral-900 mb-2">Welcome Back</h1>
-                <p className="text-5xl font-light text-neutral-400 mb-8">
-                    Your privacy is<br />waiting.
-                </p>
-                <p className="text-sm text-neutral-600 leading-relaxed mb-12 max-w-xs">
-                    Resume your encrypted session. Your data remains inaccessible to anyone but you.
-                </p>
-                <div className="space-y-4 border-t border-neutral-200">
-                    <div className="flex justify-between items-center pt-4">
-                        <span className="text-xs text-neutral-400">Last Login</span>
-                        <span className="text-xs font-semibold text-neutral-800">New York, US</span>
-                    </div>
-                    <div className="flex justify-between items-center border-t border-neutral-100 pt-4">
-                        <span className="text-xs text-neutral-400">Session</span>
-                        <span className="text-xs font-semibold text-neutral-800">Encrypted</span>
+            <div className="hidden md:flex flex-col justify-center px-24 bg-white border-r border-neutral-100 shadow-2xl shadow-neutral-100 relative overflow-hidden">
+                <div className="absolute top-12 left-12">
+                    <Link href="/" className="flex items-center gap-2 text-neutral-400 hover:text-neutral-900 transition-colors group">
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Landing Page</span>
+                    </Link>
+                </div>
+
+                <div className="relative z-10">
+                    <p className="text-[10px] text-neutral-400 font-black tracking-[0.3em] uppercase mb-12">
+                        01 — Access Portal
+                    </p>
+                    <h1 className="text-6xl font-light text-neutral-900 mb-4 tracking-tighter">Welcome Back</h1>
+                    <p className="text-6xl font-light text-neutral-300 mb-12 tracking-tighter">
+                        Your privacy is<br /><span className="text-indigo-600 font-medium">waiting.</span>
+                    </p>
+                    <p className="text-sm text-neutral-500 leading-relaxed mb-16 max-w-sm font-medium">
+                        Resume your encrypted session. Your data remains inaccessible to anyone but you through our decentralized architecture.
+                    </p>
+
+                    <div className="space-y-6 pt-12 border-t border-neutral-100">
+                        <div className="flex justify-between items-center group">
+                            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Connection Status</span>
+                            <span className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                Secured
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center group pt-4 border-t border-neutral-50">
+                            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Session Type</span>
+                            <span className="text-[10px] font-black text-neutral-800 uppercase tracking-widest">End-to-End Encrypted</span>
+                        </div>
                     </div>
                 </div>
+
+                {/* Decorative Elements */}
+                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl opacity-50" />
+                <div className="absolute top-1/2 -right-24 w-64 h-64 bg-cyan-50/50 rounded-full blur-3xl opacity-50" />
             </div>
 
             {/* Right — Form Panel */}
-            <div className="flex flex-col justify-center px-8 md:px-16 bg-white">
+            <div className="flex flex-col justify-center px-8 md:px-24 bg-white/50 backdrop-blur-xl">
                 <div className="w-full max-w-md mx-auto">
-                    <h2 className="text-4xl font-light text-neutral-900 mb-2">Sign In</h2>
-                    <p className="text-sm text-neutral-500 mb-10">Enter your credentials to access your account.</p>
+                    <div className="mb-12">
+                        <div className="w-12 h-12 bg-indigo-600 rounded-2xl mb-8 flex items-center justify-center text-white shadow-xl shadow-indigo-100 rotate-3 transition-transform hover:rotate-0 cursor-default">
+                            <Lock size={22} strokeWidth={2.5} />
+                        </div>
+                        <h2 className="text-4xl font-light text-neutral-900 mb-3 tracking-tighter">Sign In</h2>
+                        <p className="text-sm text-neutral-500 font-medium tracking-tight">Access your encrypted dashboard and messages.</p>
+                    </div>
 
                     <form
-                        className="space-y-6"
+                        className="space-y-8"
                         onSubmit={(e) => {
                             e.preventDefault()
                             router.push('/onboarding')
                         }}
                     >
-                        <div>
-                            <label className="block text-xs font-semibold text-neutral-500 tracking-widest uppercase mb-2">
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-black text-neutral-400 tracking-[0.2em] uppercase ml-1">
                                 Email or Username
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="jane@example.com"
-                                className="w-full bg-neutral-100 rounded px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-[#4338CA]/30"
-                            />
+                            </Label>
+                            <div className="relative group">
+                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-indigo-600 transition-colors">
+                                    <Mail size={18} />
+                                </div>
+                                <Input
+                                    type="text"
+                                    placeholder="jane@example.com"
+                                    className="w-full h-14 bg-neutral-100/50 border-none ring-1 ring-neutral-200 focus-visible:ring-2 focus-visible:ring-indigo-600 rounded-2xl pl-12 text-sm font-semibold transition-all shadow-sm"
+                                />
+                            </div>
                         </div>
 
-                        <div>
-                            <div className="flex justify-between mb-2">
-                                <label className="text-xs font-semibold text-neutral-500 tracking-widest uppercase">
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center ml-1">
+                                <Label className="text-[10px] font-black text-neutral-400 tracking-[0.2em] uppercase">
                                     Password
-                                </label>
-                                <Link href="/forgot-password" className="text-xs text-cyan-500 hover:text-cyan-600 font-semibold tracking-widest uppercase">
-                                    Forgot Password?
+                                </Label>
+                                <Link href="/forgot-password" title="Recover access" className="text-[10px] text-cyan-500 hover:text-cyan-600 font-black tracking-[0.1em] uppercase transition-colors">
+                                    Lost access?
                                 </Link>
                             </div>
-                            <input
-                                type="password"
-                                placeholder="············"
-                                className="w-full bg-neutral-100 rounded px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-[#4338CA]/30"
-                            />
+                            <div className="relative group">
+                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-indigo-600 transition-colors">
+                                    <Lock size={18} />
+                                </div>
+                                <Input
+                                    type="password"
+                                    placeholder="••••••••••••"
+                                    className="w-full h-14 bg-neutral-100/50 border-none ring-1 ring-neutral-200 focus-visible:ring-2 focus-visible:ring-indigo-600 rounded-2xl pl-12 text-sm font-semibold transition-all shadow-sm"
+                                />
+                            </div>
                         </div>
 
-                        <button
+                        <Button
                             type="submit"
-                            className="w-full bg-[#4338CA] hover:bg-[#3730A3] text-white text-xs font-bold tracking-widest uppercase py-4 rounded-full transition-colors"
+                            className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-black tracking-[0.2em] uppercase rounded-full transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98]"
                         >
-                            Sign In
-                        </button>
+                            Establish Session
+                        </Button>
                     </form>
 
-                    <p className="text-center text-sm text-neutral-500 mt-8">
-                        Don&apos;t have an account?{' '}
-                        <Link href="/sign-up" className="text-[#4338CA] font-semibold hover:underline">
-                            Create one
-                        </Link>
-                    </p>
+                    <div className="mt-12 pt-8 border-t border-neutral-100">
+                        <p className="text-center text-[12px] text-neutral-500 font-medium">
+                            New to the network?{' '}
+                            <Link href="/sign-up" className="text-indigo-600 font-black hover:underline tracking-tight ml-1">
+                                Join the Collective
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,9 +1,29 @@
 'use client'
 
-import { Search, Phone, MoreHorizontal, Paperclip, Smile, Send, Lock, ChevronRight, Pin, Reply, Copy, Trash2, X, Info } from 'lucide-react'
+import { Search, Phone, MoreHorizontal, Paperclip, Smile, Send, Lock, ChevronRight, Pin, Reply, Copy, Trash2, X, Info, Download, ExternalLink, Check } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@/context/chat-context'
 import { JoinFlow } from './join-flow'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuSeparator,
+    ContextMenuTrigger,
+} from '@/components/ui/context-menu'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
 
 const initialMessages = [
     { id: 1, sender: 'Alice', time: '09:41 AM', text: 'Hey team! Just wanted to share the latest mockups for the dashboard. Let me know what you think about the color palette.', isMine: false, avatar: 'Alice' },
@@ -16,7 +36,6 @@ export function ChatArea() {
     const { activeChat, chats } = useChat()
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState(initialMessages)
-    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, msgId: number } | null>(null)
     const [showPins, setShowPins] = useState(false)
     const [showDetails, setShowDetails] = useState(false)
 
@@ -24,39 +43,44 @@ export function ChatArea() {
 
     const isJoined = activeChat.joinStatus === 'joined'
 
-    const handleContextMenu = (e: React.MouseEvent, msgId: number) => {
-        e.preventDefault()
-        setContextMenu({ x: e.clientX, y: e.clientY, msgId })
-    }
-
-    const closeContextMenu = () => setContextMenu(null)
-
     return (
         <div className="flex-1 h-full flex overflow-hidden">
-            <main className="flex-1 h-full flex flex-col bg-[#F9FAFB] relative overflow-hidden" onClick={closeContextMenu}>
+            <main className="flex-1 h-full flex flex-col bg-neutral-50/30 relative overflow-hidden">
                 {/* Header */}
                 <header className="h-16 border-b border-neutral-200 bg-white px-6 flex items-center justify-between shrink-0 z-20">
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                            <h2 className="font-bold text-neutral-900 truncate">{activeChat.name}</h2>
-                            {activeChat.type === 'channel' && (
-                                <span className="text-[10px] text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded-full font-medium shrink-0">
-                                    {activeChat.members} members • {activeChat.online || 0} online
-                                </span>
-                            )}
+                        <div className="flex items-center gap-3">
+                            <Avatar className="w-8 h-8 rounded-lg">
+                                <AvatarImage src={`https://api.dicebear.com/7.x/identicon/svg?seed=${activeChat.name}`} />
+                                <AvatarFallback className="bg-indigo-50 text-indigo-600 text-[10px] font-bold">
+                                    {activeChat.name.slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                                <h2 className="font-bold text-neutral-900 truncate text-sm">{activeChat.name}</h2>
+                                {activeChat.type === 'channel' && (
+                                    <p className="text-[10px] text-neutral-400 font-medium">
+                                        {activeChat.members} members • {activeChat.online || 0} online
+                                    </p>
+                                )}
+                            </div>
                             {!activeChat.isPublic && activeChat.type === 'channel' && (
-                                <Lock size={14} className="text-neutral-400 shrink-0" />
+                                <Lock size={12} className="text-neutral-400 shrink-0" />
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-4 text-neutral-400 ml-4">
-                        <button className="hover:text-neutral-600 transition-colors"><Phone size={20} /></button>
-                        <button
+                    <div className="flex items-center gap-1.5 ml-4">
+                        <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-neutral-600 rounded-xl h-9 w-9">
+                            <Phone size={18} />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setShowDetails(!showDetails)}
-                            className={`hover:text-neutral-600 transition-colors ${showDetails ? 'text-indigo-600' : ''}`}
+                            className={`rounded-xl h-9 w-9 transition-all ${showDetails ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700' : 'text-neutral-400 hover:text-neutral-600'}`}
                         >
-                            <MoreHorizontal size={20} />
-                        </button>
+                            <MoreHorizontal size={18} />
+                        </Button>
                     </div>
                 </header>
 
@@ -65,287 +89,318 @@ export function ChatArea() {
                 ) : (
                     <>
                         {/* Pinned Messages Banner */}
-                        <div className="mx-6 mt-4 z-10">
-                            <div className="bg-white border border-neutral-100 rounded-2xl p-3 pl-4 flex items-center justify-between shadow-sm">
+                        <div className="mx-6 mt-4 z-10 animate-in slide-in-from-top-4 duration-500">
+                            <div className="bg-white border border-neutral-200/60 rounded-2xl p-2.5 pl-4 flex items-center justify-between shadow-sm shadow-neutral-100">
                                 <div className="flex items-center gap-3 overflow-hidden">
-                                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
-                                        <Pin size={16} fill="currentColor" />
+                                    <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm shadow-indigo-100/50">
+                                        <Pin size={15} fill="currentColor" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs font-bold text-neutral-900 truncate">
-                                            <span className="text-indigo-600">Reminder:</span> The quarterly roadmap meeting has...
+                                        <p className="text-[11px] font-bold text-neutral-900 truncate">
+                                            <span className="text-indigo-600 mr-1">Reminder:</span> The quarterly roadmap meeting has...
                                         </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-[9px] font-bold text-cyan-500 bg-cyan-50 px-2 py-0.5 rounded-full">3 PINS</span>
-                                    <div className="w-px h-4 bg-neutral-100" />
-                                    <button
+                                    <Badge variant="secondary" className="bg-cyan-50 text-cyan-600 border-none font-black text-[9px] px-2 py-0.5 rounded-lg">
+                                        3 PINS
+                                    </Badge>
+                                    <Separator orientation="vertical" className="h-4 bg-neutral-100" />
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => setShowPins(true)}
-                                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
+                                        className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest px-2 h-7"
                                     >
                                         View All
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-6">
-                            <div className="flex justify-center">
-                                <span className="text-[10px] font-bold text-neutral-400 bg-neutral-100 px-3 py-1 rounded-full uppercase tracking-wider">October 24, 2023</span>
-                            </div>
+                        {/* Messages Area */}
+                        <ScrollArea className="flex-1 px-6 pt-2">
+                            <div className="space-y-8 pb-8">
+                                <div className="flex justify-center my-6">
+                                    <Badge variant="outline" className="text-[9px] font-black text-neutral-400 bg-white border-neutral-100 px-3 py-1 rounded-full uppercase tracking-[0.2em] shadow-sm">
+                                        October 24, 2023
+                                    </Badge>
+                                </div>
 
-                            {messages.map((msg) => {
-                                if (msg.type === 'encrypted') {
-                                    return (
-                                        <div key={msg.id} className="max-w-md mx-auto">
-                                            <div className="bg-cyan-50 border border-cyan-100 rounded-2xl p-6 relative overflow-hidden group">
-                                                <div className="flex items-start gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-white border border-cyan-100 flex items-center justify-center text-cyan-600 shrink-0 shadow-sm">
-                                                        <Lock size={20} />
+                                {messages.map((msg) => {
+                                    if (msg.type === 'encrypted') {
+                                        return (
+                                            <div key={msg.id} className="max-w-md mx-auto animate-in slide-in-from-bottom-2 duration-500">
+                                                <div className="bg-gradient-to-br from-cyan-50/50 to-white border border-cyan-100/50 rounded-[32px] p-8 relative overflow-hidden group shadow-sm">
+                                                    <div className="flex items-start gap-5 relative z-10">
+                                                        <div className="w-12 h-12 rounded-[18px] bg-white border border-cyan-100 flex items-center justify-center text-cyan-600 shrink-0 shadow-xl shadow-cyan-100/20 group-hover:scale-110 transition-transform">
+                                                            <Lock size={22} />
+                                                        </div>
+                                                        <div className="space-y-4">
+                                                            <p className="text-sm font-bold text-neutral-900 tracking-tight">Encrypted Announcement</p>
+                                                            <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+                                                                This message is pinned and end-to-end encrypted. Only verified members can view its contents.
+                                                            </p>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="h-9 border-cyan-100 bg-white text-cyan-600 hover:bg-cyan-50 hover:text-cyan-700 rounded-xl text-[10px] font-black uppercase tracking-widest gap-2 shadow-sm"
+                                                            >
+                                                                Unlock Content <ChevronRight size={14} />
+                                                            </Button>
+                                                        </div>
                                                     </div>
-                                                    <div className="space-y-3">
-                                                        <p className="text-sm font-semibold text-neutral-900">Encrypted Announcement</p>
-                                                        <p className="text-xs text-neutral-600 leading-relaxed italic">
-                                                            This message is pinned and end-to-end encrypted. Only verified members of the {activeChat.name} channel can view its contents.
-                                                        </p>
-                                                        <button className="text-[10px] font-bold text-cyan-600 uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">
-                                                            Unlock Content <ChevronRight size={14} />
-                                                        </button>
+                                                    <div className="absolute -top-4 -right-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity rotate-12">
+                                                        <Lock size={120} />
                                                     </div>
-                                                </div>
-                                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                                    <Lock size={80} />
                                                 </div>
                                             </div>
+                                        )
+                                    }
+
+                                    return (
+                                        <div key={msg.id} className={`flex items-end gap-3 ${msg.isMine ? 'flex-row-reverse' : ''} group/msg relative animate-in fade-in duration-500`}>
+                                            <Avatar className="w-9 h-9 border-2 border-white shadow-sm shrink-0">
+                                                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatar}`} />
+                                                <AvatarFallback>{msg.sender[0]}</AvatarFallback>
+                                            </Avatar>
+
+                                            <div className={`max-w-[75%] space-y-1.5 ${msg.isMine ? 'items-end' : ''}`}>
+                                                <div className={`flex items-center gap-2 px-1 ${msg.isMine ? 'flex-row-reverse' : ''}`}>
+                                                    <span className="text-[11px] font-bold text-neutral-900">{msg.sender}</span>
+                                                    <span className="text-[10px] text-neutral-400 font-medium">{msg.time}</span>
+                                                </div>
+
+                                                <ContextMenu>
+                                                    <ContextMenuTrigger>
+                                                        <div
+                                                            className={`p-4 rounded-3xl text-[13px] leading-relaxed font-medium transition-all shadow-xs ${msg.isMine
+                                                                ? 'bg-indigo-600 text-white rounded-br-none hover:bg-indigo-700 shadow-indigo-100'
+                                                                : 'bg-white border border-neutral-100 text-neutral-800 rounded-bl-none hover:border-neutral-200'
+                                                                }`}
+                                                        >
+                                                            {msg.text}
+                                                        </div>
+                                                    </ContextMenuTrigger>
+                                                    <ContextMenuContent className="w-56 rounded-2xl p-1.5 shadow-2xl border-neutral-100">
+                                                        <ContextMenuItem className="rounded-xl gap-3 font-bold text-xs py-2.5">
+                                                            <Reply size={16} className="text-neutral-400" /> Reply in Thread
+                                                        </ContextMenuItem>
+                                                        <ContextMenuItem className="rounded-xl gap-3 font-bold text-xs py-2.5">
+                                                            <Copy size={16} className="text-neutral-400" /> Copy Text
+                                                        </ContextMenuItem>
+                                                        <ContextMenuItem className="rounded-xl gap-3 font-bold text-xs py-2.5 text-indigo-600 focus:text-indigo-700 focus:bg-indigo-50">
+                                                            <Pin size={16} fill="currentColor" /> Pin Message
+                                                        </ContextMenuItem>
+                                                        <ContextMenuSeparator />
+                                                        <ContextMenuItem className="rounded-xl gap-3 font-bold text-xs py-2.5 text-red-500 focus:text-red-600 focus:bg-red-50">
+                                                            <Trash2 size={16} /> Delete Message
+                                                        </ContextMenuItem>
+                                                    </ContextMenuContent>
+                                                </ContextMenu>
+
+                                                {msg.status === 'read' && (
+                                                    <div className="flex items-center gap-1.5 px-1 justify-end animate-in fade-in duration-700">
+                                                        <span className="text-[10px] text-neutral-400 font-bold italic">read</span>
+                                                        <div className="flex -space-x-1.5">
+                                                            <Check size={12} className="text-indigo-400" />
+                                                            <Check size={12} className="text-indigo-400" />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={`rounded-lg h-7 w-7 text-neutral-300 hover:text-neutral-600 hover:bg-neutral-100 transition-all opacity-0 group-hover/msg:opacity-100 shrink-0 mb-2 ${msg.isMine ? 'mr-1' : 'ml-1'}`}
+                                            >
+                                                <MoreHorizontal size={14} />
+                                            </Button>
                                         </div>
                                     )
-                                }
+                                })}
+                            </div>
+                        </ScrollArea>
 
-                                return (
-                                    <div key={msg.id} className={`flex items-end gap-3 ${msg.isMine ? 'flex-row-reverse' : ''}`}>
-                                        <div className="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden shrink-0">
-                                            <img
-                                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatar}`}
-                                                alt={msg.sender}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <div className={`max-w-[70%] space-y-1 ${msg.isMine ? 'items-end' : ''} group/msg relative`}>
-                                            <div className={`flex items-center gap-2 mb-1 ${msg.isMine ? 'flex-row-reverse' : ''}`}>
-                                                <span className="text-[11px] font-bold text-neutral-900">{msg.sender}</span>
-                                                <span className="text-[10px] text-neutral-400">{msg.time}</span>
-                                            </div>
-                                            <div className={`flex items-center gap-2 ${msg.isMine ? 'flex-row-reverse' : ''}`}>
-                                                <div
-                                                    onContextMenu={(e) => handleContextMenu(e, msg.id)}
-                                                    className={`p-4 rounded-2xl text-sm leading-relaxed cursor-pointer transition-all ${msg.isMine
-                                                        ? 'bg-indigo-600 text-white rounded-br-none hover:bg-indigo-700'
-                                                        : 'bg-white border border-neutral-100 text-neutral-800 rounded-bl-none shadow-sm hover:border-neutral-200'
-                                                        }`}
-                                                >
-                                                    {msg.text}
-                                                </div>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-                                                        setContextMenu({ x: rect.right, y: rect.bottom, msgId: msg.id })
-                                                    }}
-                                                    className={`p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-all opacity-0 group-hover/msg:opacity-100 shrink-0 ${msg.isMine ? 'mr-1' : 'ml-1'}`}
-                                                >
-                                                    <MoreHorizontal size={14} />
-                                                </button>
-                                            </div>
-                                            {msg.status === 'read' && (
-                                                <div className="flex items-center gap-1 mt-1 justify-end">
-                                                    <span className="text-[10px] text-neutral-400 italic">read</span>
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-neutral-300"><path d="M2.5 12.5L7.5 17.5L13.5 11.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M8.5 12.5L13.5 17.5L19.5 11.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-
-                        {/* Input */}
-                        <div className="p-6 bg-white border-t border-neutral-200 z-20">
-                            <div className="flex items-center gap-4 bg-neutral-50 border border-neutral-100 rounded-2xl p-2 pl-4">
-                                <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
+                        {/* Input Area */}
+                        <div className="p-6 bg-white border-t border-neutral-200/60 z-20">
+                            <div className="flex items-center gap-3 bg-neutral-50/50 border border-neutral-200/60 rounded-[28px] p-2 pl-5 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:border-indigo-200 transition-all shadow-sm">
+                                <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-indigo-600 rounded-full h-10 w-10">
                                     <Paperclip size={20} />
-                                </button>
-                                <input
+                                </Button>
+                                <Input
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="Write a message..."
-                                    className="flex-1 bg-transparent border-none focus:outline-none text-sm text-neutral-800 placeholder:text-neutral-400"
+                                    placeholder="Write a professional message..."
+                                    className="flex-1 bg-transparent border-none focus-visible:ring-0 text-[13px] font-medium text-neutral-800 placeholder:text-neutral-400 h-10 shadow-none px-0"
                                 />
-                                <div className="flex items-center gap-2">
-                                    <button className="bg-indigo-600 text-white p-2.5 rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 active:scale-95">
-                                        <Send size={18} />
-                                    </button>
+                                <div className="flex items-center gap-2 pr-1">
+                                    <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-indigo-600 rounded-full h-10 w-10">
+                                        <Smile size={20} />
+                                    </Button>
+                                    <Button className="bg-indigo-600 text-white h-11 w-11 rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center shrink-0 active:scale-95 group">
+                                        <Send size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    </Button>
                                 </div>
                             </div>
                         </div>
                     </>
                 )}
 
-                {/* Context Menu Modal/Overlay */}
-                {contextMenu && (
-                    <div
-                        className="fixed inset-0 z-[100]"
-                        onClick={closeContextMenu}
-                    >
-                        <div
-                            style={{ left: contextMenu.x, top: contextMenu.y }}
-                            className="absolute w-56 bg-white rounded-2xl shadow-2xl border border-neutral-100 overflow-hidden py-1.5 animate-in fade-in zoom-in duration-150"
-                        >
-                            <button className="w-full px-4 py-2.5 text-left text-sm font-semibold text-neutral-600 hover:bg-neutral-50 flex items-center gap-3 transition-colors">
-                                <Reply size={16} /> Reply in Thread
-                            </button>
-                            <button className="w-full px-4 py-2.5 text-left text-sm font-semibold text-neutral-600 hover:bg-neutral-50 flex items-center gap-3 transition-colors">
-                                <Copy size={16} /> Copy Text
-                            </button>
-                            <button className="w-full px-4 py-2.5 text-left text-sm font-semibold text-indigo-600 hover:bg-indigo-50/50 flex items-center gap-3 transition-colors bg-indigo-50/30">
-                                <Pin size={16} fill="currentColor" /> Pin Message
-                            </button>
-                            <div className="h-px bg-neutral-100 my-1" />
-                            <button className="w-full px-4 py-2.5 text-left text-sm font-semibold text-red-500 hover:bg-red-50 flex items-center gap-3 transition-colors">
-                                <Trash2 size={16} /> Delete Message
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Pinned Messages Modal */}
-                {showPins && (
-                    <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[200] flex items-center justify-center p-6" onClick={() => setShowPins(false)}>
-                        <div className="bg-white rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4" onClick={e => e.stopPropagation()}>
-                            <div className="p-8 pb-4 flex items-center justify-between border-b border-neutral-50">
-                                <h2 className="text-xl font-bold text-neutral-900">Pinned Messages</h2>
-                                <button onClick={() => setShowPins(false)} className="text-neutral-400 hover:text-neutral-600 transition-colors">
-                                    <X size={20} />
-                                </button>
+                {/* Pinned Messages Dialog */}
+                <Dialog open={showPins} onOpenChange={setShowPins}>
+                    <DialogContent className="max-w-xl p-0 overflow-hidden border-none rounded-[32px] shadow-2xl">
+                        <DialogHeader className="p-8 pb-4 border-b border-neutral-50 bg-white">
+                            <div className="flex items-center justify-between">
+                                <DialogTitle className="text-xl font-bold text-neutral-900 tracking-tight flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                        <Pin size={20} fill="currentColor" />
+                                    </div>
+                                    Pinned Messages
+                                </DialogTitle>
                             </div>
-                            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                        </DialogHeader>
+                        <ScrollArea className="max-h-[60vh] p-6 pt-0 bg-neutral-50/30">
+                            <div className="space-y-4 pt-6 pb-8">
                                 {[
                                     { user: 'Marcus Chen', time: 'Yesterday, 4:20 PM', text: 'Reminder: The quarterly roadmap meeting has been moved to Friday at 3 PM EST due to conflicts. Please update your calendar...', avatar: 'Marcus' },
                                     { user: 'Sarah Connor', time: 'Oct 24, 10:00 AM', text: 'Here is the link to the new design system documentation: figma.com/file/ds-v2. Make sure to review the typography sectio...', avatar: 'Sarah' },
                                     { user: 'Elena Fisher', time: 'Oct 22, 2:15 PM', file: 'Q4_Goals_Final.pdf', size: '1.2 MB', avatar: 'Elena' },
                                     { user: 'You', time: 'Oct 20, 9:30 AM', text: 'Please make sure all PRs are submitted by EOD Thursday so we can do a proper code freeze on Friday.', avatar: 'Jane' }
                                 ].map((pin, i) => (
-                                    <div key={i} className="bg-white border border-neutral-100 rounded-3xl p-6 relative group hover:border-indigo-100 transition-all cursor-pointer">
+                                    <div key={i} className="bg-white border border-neutral-200/60 rounded-[28px] p-6 relative group hover:border-indigo-200 transition-all cursor-pointer shadow-sm hover:shadow-md">
                                         <div className="flex items-start gap-4">
-                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200">
-                                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${pin.avatar}`} className="w-full h-full object-cover" />
-                                            </div>
+                                            <Avatar className="w-10 h-10 rounded-full shrink-0 ring-2 ring-white shadow-sm">
+                                                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${pin.avatar}`} />
+                                                <AvatarFallback>{pin.user[0]}</AvatarFallback>
+                                            </Avatar>
                                             <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
+                                                <div className="flex items-center gap-2 mb-1.5">
                                                     <span className="text-sm font-bold text-neutral-900">{pin.user}</span>
-                                                    <span className="text-[10px] text-neutral-400 font-medium">{pin.time}</span>
+                                                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">{pin.time}</span>
                                                 </div>
-                                                {pin.text && <p className="text-xs text-neutral-600 leading-relaxed font-medium line-clamp-3">{pin.text}</p>}
+                                                {pin.text && <p className="text-[13px] text-neutral-600 leading-relaxed font-medium line-clamp-3 italic">"{pin.text}"</p>}
                                                 {pin.file && (
-                                                    <div className="mt-3 flex items-center gap-3 bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
-                                                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm border border-neutral-100">
-                                                            <Paperclip size={18} />
+                                                    <div className="mt-4 flex items-center gap-4 bg-neutral-50/50 p-4 rounded-2xl border border-neutral-100 group/file hover:bg-indigo-50/50 hover:border-indigo-100 transition-all">
+                                                        <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm border border-neutral-100 group-hover/file:scale-105 transition-transform">
+                                                            <Paperclip size={20} />
                                                         </div>
-                                                        <div className="min-w-0">
-                                                            <p className="text-[11px] font-bold text-neutral-900 truncate">{pin.file}</p>
-                                                            <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">{pin.size}</p>
+                                                        <div className="min-w-0 flex-1">
+                                                            <p className="text-[12px] font-bold text-neutral-900 truncate">{pin.file}</p>
+                                                            <p className="text-[10px] text-neutral-400 font-black uppercase tracking-[0.1em]">{pin.size}</p>
                                                         </div>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-neutral-400 hover:text-indigo-600">
+                                                            <Download size={16} />
+                                                        </Button>
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="text-indigo-600 shrink-0">
-                                                <Pin size={16} fill="currentColor" />
+                                            <div className="text-indigo-400 shrink-0 group-hover:text-indigo-600 transition-colors">
+                                                <Pin size={18} fill="currentColor" />
                                             </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    </div>
-                )}
+                        </ScrollArea>
+                    </DialogContent>
+                </Dialog>
             </main>
 
             {/* Right Sidebar - Thread/Details */}
-            {showDetails && (
-                <aside className="w-80 h-full bg-white border-l border-neutral-200 flex flex-col shrink-0 animate-in slide-in-from-right duration-300">
-                    <header className="h-16 border-b border-neutral-200 px-6 flex items-center justify-between shrink-0">
-                        <h3 className="font-bold text-neutral-900 text-sm italic">Channel Info</h3>
-                        <button onClick={() => setShowDetails(false)} className="text-neutral-400 hover:text-neutral-600">
+            {showDetails && (activeChat as any) && (
+                <aside className="w-85 h-full bg-white border-l border-neutral-200 flex flex-col shrink-0 animate-in slide-in-from-right duration-500 z-30 shadow-2xl">
+                    <header className="h-16 border-b border-neutral-200 px-6 flex items-center justify-between shrink-0 bg-white/80 backdrop-blur-md">
+                        <h3 className="font-bold text-neutral-900 text-[11px] uppercase tracking-[0.2em] italic">Knowledge Base</h3>
+                        <Button variant="ghost" size="icon" onClick={() => setShowDetails(false)} className="text-neutral-400 hover:text-neutral-600 rounded-xl h-8 w-8">
                             <X size={18} />
-                        </button>
+                        </Button>
                     </header>
-                    <div className="flex-1 overflow-y-auto">
-                        <div className="p-8 flex flex-col items-center border-b border-neutral-50">
-                            <div className="w-20 h-20 rounded-[28px] bg-neutral-100 overflow-hidden mb-6 shadow-sm ring-1 ring-black/5">
-                                <img
-                                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${activeChat.name}`}
-                                    alt={activeChat.name}
-                                    className="w-full h-full object-cover"
-                                />
+                    <ScrollArea className="flex-1">
+                        <div className="p-10 flex flex-col items-center border-b border-neutral-100 bg-neutral-50/30">
+                            <div className="relative group mb-8">
+                                <Avatar className="w-24 h-24 rounded-[32px] shadow-2xl ring-4 ring-white transform group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+                                    <AvatarImage
+                                        src={`https://api.dicebear.com/7.x/identicon/svg?seed=${activeChat.name}`}
+                                        className="object-cover"
+                                    />
+                                    <AvatarFallback className="text-2xl font-black bg-indigo-50 text-indigo-600">
+                                        {activeChat.name.slice(0, 2).toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-emerald-500 border-4 border-white shadow-lg" />
                             </div>
-                            <h2 className="text-lg font-bold text-neutral-900 mb-1">{activeChat.name}</h2>
-                            <p className="text-[11px] text-neutral-400 font-medium text-center px-4 leading-relaxed">
-                                {activeChat.description || 'Design system discussions and handoffs.'}
+                            <h2 className="text-xl font-black text-neutral-900 mb-2 tracking-tight">{activeChat.name}</h2>
+                            <p className="text-[12px] text-neutral-500 font-medium text-center px-6 leading-relaxed">
+                                {activeChat.description || 'Enterprise collaboration and design synchronize space for the core team.'}
                             </p>
+                            <div className="flex gap-2 mt-6">
+                                <Badge variant="secondary" className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 cursor-pointer px-3 py-1 font-bold text-[10px] rounded-lg">VERIFIED</Badge>
+                                <Badge variant="secondary" className="bg-cyan-50 text-cyan-600 hover:bg-cyan-100 cursor-pointer px-3 py-1 font-bold text-[10px] rounded-lg">SECURED</Badge>
+                            </div>
                         </div>
 
-                        <div className="p-6 border-b border-neutral-50">
-                            <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Shared Media</h4>
-                                <button className="text-[10px] font-bold text-cyan-500 hover:underline">View All</button>
+                        <div className="p-8 border-b border-neutral-100">
+                            <div className="flex items-center justify-between mb-6">
+                                <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Vault Media</h4>
+                                <Button variant="ghost" size="sm" className="text-[10px] font-black text-indigo-600 hover:underline px-0 h-auto">GALLERY</Button>
                             </div>
-                            <div className="grid grid-cols-3 gap-2">
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} className="aspect-square rounded-xl bg-neutral-100 overflow-hidden ring-1 ring-black/5">
-                                        <img src={`https://picsum.photos/seed/${activeChat.id}${i}/200`} className="w-full h-full object-cover opacity-80" />
+                            <div className="grid grid-cols-3 gap-2.5">
+                                {[1, 2, 3, 4, 5, 6].map(i => (
+                                    <div key={i} className="aspect-square rounded-[14px] bg-neutral-100 overflow-hidden ring-1 ring-black/5 group cursor-pointer">
+                                        <img
+                                            src={`https://picsum.photos/seed/${activeChat.id}${i}/200`}
+                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+                                            alt="media"
+                                        />
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {activeChat.type === 'channel' && (
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Members ({activeChat.members})</h4>
-                                    <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
-                                        <Search size={14} />
-                                    </button>
-                                </div>
-                                <div className="space-y-4">
-                                    {[
-                                        { name: 'Admin User', role: 'Owner', avatar: 'Admin', online: true },
-                                        { name: 'Senior Designer', role: 'Member', avatar: 'Senior', online: true },
-                                        { name: 'Guest User', role: 'Member', avatar: 'Guest', status: 'last seen 2h ago' }
-                                    ].map((member, i) => (
-                                        <div key={i} className="flex items-center gap-3">
-                                            <div className="relative">
-                                                <div className="w-9 h-9 rounded-full bg-neutral-200 overflow-hidden">
-                                                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.avatar}`} className="w-full h-full object-cover" />
-                                                </div>
-                                                {member.online && <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-[11px] font-bold text-neutral-900 truncate flex items-center gap-2">
-                                                    {member.name}
-                                                    {member.role === 'Owner' && <span className="text-[8px] font-bold text-cyan-500 tracking-tighter uppercase">Owner</span>}
-                                                </p>
-                                                <p className="text-[9px] text-neutral-400 font-medium">
-                                                    {member.online ? 'Online' : member.status}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                        <div className="p-8">
+                            <div className="flex items-center justify-between mb-8">
+                                <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Access Members ({activeChat.members})</h4>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-indigo-600 rounded-xl">
+                                    <Search size={16} />
+                                </Button>
                             </div>
-                        )}
-                    </div>
+                            <div className="space-y-5">
+                                {[
+                                    { name: 'Marcus Chen', role: 'Owner', avatar: 'Marcus', online: true, color: 'indigo' },
+                                    { name: 'Sarah Connor', role: 'Senior', avatar: 'Sarah', online: true, color: 'emerald' },
+                                    { name: 'Jane Doe', role: 'Member', avatar: 'Jane', status: 'last seen 2h ago', online: false }
+                                ].map((member, i) => (
+                                    <div key={i} className="flex items-center gap-4 group cursor-pointer hover:bg-neutral-50/50 p-2 -mx-2 rounded-2xl transition-colors">
+                                        <div className="relative">
+                                            <Avatar className="w-11 h-11 border-2 border-white shadow-sm ring-1 ring-neutral-100">
+                                                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.avatar}`} />
+                                                <AvatarFallback>{member.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                            {member.online && <div className="absolute bottom-0 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-4 border-white rounded-full shadow-sm" />}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[13px] font-bold text-neutral-900 truncate flex items-center gap-2">
+                                                {member.name}
+                                                {member.role === 'Owner' && <Badge className="h-4 px-1 text-[8px] bg-indigo-50 text-indigo-600 border-indigo-100 shadow-none">OWNER</Badge>}
+                                            </p>
+                                            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-tight">
+                                                {member.online ? <span className="text-emerald-500">Active now</span> : member.status}
+                                            </p>
+                                        </div>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-neutral-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <ExternalLink size={14} />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                            <Button variant="outline" className="w-full mt-10 rounded-[20px] h-12 text-[11px] font-black uppercase tracking-widest border-neutral-200 text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600 shadow-sm">
+                                View Full Directory
+                            </Button>
+                        </div>
+                    </ScrollArea>
                 </aside>
             )}
         </div>
