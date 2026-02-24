@@ -1,8 +1,11 @@
 'use client'
 
-import { ArrowLeft, Mail, MessageSquare, Send, Clock, MapPin } from 'lucide-react'
+import { ArrowLeft, Send } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 
 export default function ContactUsPage() {
     const [status, setStatus] = useState<'idle' | 'sending' | 'success'>('idle')
@@ -57,20 +60,20 @@ export default function ContactUsPage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider px-1">Full Name</label>
-                                            <input
+                                            <Input
                                                 required
                                                 type="text"
                                                 placeholder="John Doe"
-                                                className="w-full h-12 px-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                                                className="h-12 px-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
                                             />
                                         </div>
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider px-1">Email Address</label>
-                                            <input
+                                            <Input
                                                 required
                                                 type="email"
                                                 placeholder="john@example.com"
-                                                className="w-full h-12 px-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                                                className="h-12 px-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
                                             />
                                         </div>
                                     </div>
@@ -85,14 +88,14 @@ export default function ContactUsPage() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider px-1">Message</label>
-                                        <textarea
+                                        <Textarea
                                             required
                                             rows={5}
                                             placeholder="How can we help you today?"
-                                            className="w-full p-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"
+                                            className="p-4 rounded-xl bg-neutral-50 border-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"
                                         />
                                     </div>
-                                    <button
+                                    <Button
                                         disabled={status === 'sending'}
                                         type="submit"
                                         className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 group disabled:opacity-70"
@@ -105,73 +108,11 @@ export default function ContactUsPage() {
                                                 <Send size={16} className="group-hover:translate-x-1 transition-transform" />
                                             </>
                                         )}
-                                    </button>
+                                    </Button>
                                 </form>
                             )}
                         </div>
                     </div>
-
-                    {/* Information Sidebar */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-indigo-600 rounded-3xl p-8 text-white space-y-8 shadow-xl shadow-indigo-100">
-                            <h3 className="text-xl font-semibold">Support Information</h3>
-
-                            <div className="space-y-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                        <Mail size={20} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest">Email Us</p>
-                                        <p className="text-sm font-medium">support@brightcorner.com</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                        <Clock size={20} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest">Available Hours</p>
-                                        <p className="text-sm font-medium">Mon - Fri: 9am - 6pm EST</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                        <MessageSquare size={20} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest">Chat Support</p>
-                                        <p className="text-sm font-medium">Typically instant response</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="pt-8 border-t border-white/10">
-                                <Link
-                                    href="/terms"
-                                    className="text-xs text-indigo-100 hover:text-white transition-colors underline underline-offset-4"
-                                >
-                                    Review our support terms
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-3xl border border-neutral-100 p-6 shadow-sm space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-indigo-600">
-                                    <MapPin size={20} />
-                                </div>
-                                <h4 className="text-sm font-bold text-neutral-900">Headquarters</h4>
-                            </div>
-                            <p className="text-xs text-neutral-500 leading-relaxed pl-1">
-                                123 Secure Way, Cryptography Suite 400<br />
-                                Palo Alto, CA 94301, USA
-                            </p>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

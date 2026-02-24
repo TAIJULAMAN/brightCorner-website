@@ -3,6 +3,8 @@
 import { ArrowLeft, MessageSquare, AtSign, UserPlus, Heart, MoreHorizontal, Check, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 
 type Notification = {
     id: string
@@ -81,13 +83,15 @@ export default function NotificationsPage() {
                     <ArrowLeft size={20} />
                 </Link>
                 <h1 className="text-base font-semibold text-neutral-900 absolute left-1/2 -translate-x-1/2">Notifications</h1>
-                <button
+                <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={markAllAsRead}
-                    className="text-indigo-600 hover:text-indigo-700 text-xs font-bold transition-colors flex items-center gap-1.5"
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 text-xs font-bold transition-colors flex items-center gap-1.5 h-8"
                 >
                     <Check size={14} />
                     Mark all read
-                </button>
+                </Button>
             </header>
 
             {/* List */}
@@ -98,8 +102,8 @@ export default function NotificationsPage() {
                             <div
                                 key={notification.id}
                                 className={`group relative p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex gap-4 ${notification.isRead
-                                    ? 'bg-white border-neutral-100 hover:border-neutral-200 shadow-sm'
-                                    : 'bg-indigo-50/50 border-indigo-100/50 shadow-md shadow-indigo-100/10'
+                                        ? 'bg-white border-neutral-100 hover:border-neutral-200 shadow-sm'
+                                        : 'bg-indigo-50/50 border-indigo-100/50 shadow-md shadow-indigo-100/10'
                                     }`}
                             >
                                 {/* Unread Indicator */}
@@ -109,13 +113,10 @@ export default function NotificationsPage() {
 
                                 {/* Avatar & Type Icon */}
                                 <div className="relative shrink-0">
-                                    <div className="w-11 h-11 rounded-xl bg-neutral-100 overflow-hidden">
-                                        <img
-                                            src={notification.user.avatar}
-                                            alt={notification.user.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
+                                    <Avatar className="w-11 h-11 rounded-xl shadow-xs border border-neutral-100">
+                                        <AvatarImage src={notification.user.avatar} alt={notification.user.name} />
+                                        <AvatarFallback className="rounded-xl">{notification.user.name[0]}</AvatarFallback>
+                                    </Avatar>
                                     <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-lg shadow-sm border border-neutral-100 flex items-center justify-center">
                                         {getIcon(notification.type)}
                                     </div>
@@ -137,9 +138,9 @@ export default function NotificationsPage() {
                                 </div>
 
                                 {/* Actions */}
-                                <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-neutral-100 rounded-lg h-fit outline-none">
+                                <Button variant="ghost" size="icon-sm" className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-neutral-100 rounded-lg h-fit">
                                     <MoreHorizontal size={18} className="text-neutral-400" />
-                                </button>
+                                </Button>
                             </div>
                         ))}
                     </div>

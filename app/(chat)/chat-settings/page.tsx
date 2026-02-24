@@ -1,21 +1,11 @@
 'use client'
 
-import {
-    ChevronLeft,
-    ChevronRight,
-    Eye,
-    Mail,
-    Bell,
-    ShieldCheck,
-    Palette,
-    Moon,
-    HelpCircle,
-    FileText,
-    Shield,
-    Info
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, Eye, Mail, Bell, ShieldCheck, Palette, Moon, HelpCircle, FileText, Shield, Info, ArrowLeft, LogOut, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Switch } from '@/components/ui/switch'
+import { DeleteAccountModal } from '@/components/chat/delete-account-modal'
 
 type SettingItem = {
     icon: React.ReactNode
@@ -27,7 +17,13 @@ type SettingItem = {
 }
 
 export default function SettingsPage() {
+    const router = useRouter()
     const [nightMode, setNightMode] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+    const handleLogOut = () => {
+        router.push('/sign-in')
+    }
 
     const settingsGroups: { items: SettingItem[] }[] = [
         {
@@ -43,7 +39,8 @@ export default function SettingsPage() {
                     label: 'Notifications',
                     href: '/chat-settings/notifications'
                 },
-                { icon: <ShieldCheck size={18} className="text-neutral-500" />, label: 'Privacy & Security', href: '#' },
+                { icon: <ShieldCheck size={18} className="text-neutral-500" />, label: 'Privacy Settings', href: '/chat-settings/privacy' },
+                { icon: <ShieldCheck size={18} className="text-neutral-500" />, label: 'Two-Step Verification', href: '/chat-settings/two-step-verification' },
             ]
         },
         {
@@ -59,7 +56,7 @@ export default function SettingsPage() {
     return (
         <div className="flex-1 h-full bg-[#F8FAFC] flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between">
+            <header className="px-6 py-4 bg-white border-b border-neutral-100 flex items-center justify-between shadow-sm">
                 <Link href="/chat" className="flex items-center gap-1 text-cyan-500 hover:text-cyan-600 transition-colors font-medium">
                     <ChevronLeft size={20} />
                     <span>Chats</span>
@@ -73,35 +70,26 @@ export default function SettingsPage() {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {settingsGroups.map((group, groupIdx) => (
-                    <div key={groupIdx} className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
+                    <div key={groupIdx} className="bg-white rounded-2xl border border-neutral-100 overflow-hidden shadow-sm">
                         {group.items.map((item, itemIdx) => (
                             <div key={itemIdx}>
                                 {item.type === 'toggle' ? (
-                                    <div className="flex items-center justify-between p-4 bg-white">
+                                    <div className="flex items-center justify-between p-4 bg-white hover:bg-neutral-50/30 transition-colors">
                                         <div className="flex items-center gap-4">
                                             <div className="w-8 h-8 rounded-lg bg-neutral-50 flex items-center justify-center">
                                                 {item.icon}
                                             </div>
                                             <span className="text-sm font-medium text-neutral-700">{item.label}</span>
                                         </div>
-                                        <button
-                                            onClick={item.onChange}
-                                            className={`w-12 h-6 rounded-full transition-colors relative ${item.value ? 'bg-blue-500' : 'bg-neutral-200'}`}
-                                        >
-                                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${item.value ? 'left-7' : 'left-1'}`}>
-                                                {item.value && (
-                                                    <div className="flex items-center justify-center w-full h-full">
-                                                        <div className="w-1.5 h-1 bg-blue-500 rotate-45 translate-x-[-0.5px] translate-y-[1px] rounded-full" />
-                                                        <div className="w-2.5 h-1 bg-blue-500 -rotate-45 translate-x-[-1.5px] rounded-full" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </button>
+                                        <Switch
+                                            checked={item.value}
+                                            onCheckedChange={item.onChange}
+                                        />
                                     </div>
                                 ) : (
                                     <Link href={item.href as string} className="flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-8 h-8 rounded-lg bg-neutral-50 flex items-center justify-center">
+                                            <div className="w-8 h-8 rounded-lg bg-neutral-50 flex items-center justify-center group-hover:bg-white transition-colors">
                                                 {item.icon}
                                             </div>
                                             <span className="text-sm font-medium text-neutral-700">{item.label}</span>
@@ -117,13 +105,38 @@ export default function SettingsPage() {
                     </div>
                 ))}
 
-                {/* Footer Actions */}
-                <div className="py-8 space-y-4">
-                    <button className="w-full py-3 text-red-500 font-medium hover:bg-red-50 rounded-xl transition-colors text-center">
-                        Delete Account
+                {/* Account Actions */}
+                <div className="space-y-4 pt-4 pb-8">
+                    <button
+                        onClick={handleLogOut}
+                        className="w-full flex items-center justify-between p-4 bg-white rounded-2xl border border-neutral-100 text-red-500 font-medium hover:bg-red-50 transition-colors group shadow-sm transition-all active:scale-[0.99]"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                                <LogOut size={18} />
+                            </div>
+                            <span className="text-sm">Log Out</span>
+                        </div>
+                    </button>
+
+                    <button
+                        onClick={() => setIsDeleteModalOpen(true)}
+                        className="w-full flex items-center justify-between p-4 bg-white rounded-2xl border border-neutral-100 text-red-600 font-bold hover:bg-red-50 transition-colors group shadow-sm transition-all active:scale-[0.99]"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                                <Trash2 size={18} />
+                            </div>
+                            <span className="text-sm">Delete Account</span>
+                        </div>
                     </button>
                 </div>
             </div>
+
+            <DeleteAccountModal
+                isOpen={isDeleteModalOpen}
+                onOpenChange={setIsDeleteModalOpen}
+            />
         </div>
     )
 }

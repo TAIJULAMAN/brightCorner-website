@@ -14,7 +14,7 @@ export function Sidebar() {
         <aside className="w-80 h-full bg-white border-r border-neutral-200 flex flex-col">
             {/* Header */}
             <div className="p-6">
-                <div className="flex items-center gap-2 mb-6">
+                <Link href="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
                     <Image
                         src="/logo2.png"
                         alt="BrightCorner Logo"
@@ -23,7 +23,7 @@ export function Sidebar() {
                         className="rounded-full"
                     />
                     <span className="font-bold text-neutral-900 tracking-tight">BrightCorner</span>
-                </div>
+                </Link>
 
                 <div className="relative mb-6">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />

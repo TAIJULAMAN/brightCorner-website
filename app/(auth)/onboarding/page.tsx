@@ -1,13 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     User, Check, Camera,
     Shield, Bell, Lock, EyeOff, MessageSquare,
-    Mail, AtSign, Smartphone
+    Mail, AtSign, Smartphone, ChevronLeft
 } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 
 type Step = 'username' | 'profile' | 'privacy' | 'notifications' | 'success'
 
@@ -28,6 +35,7 @@ interface OnboardingData {
 
 export default function OnboardingPage() {
     const router = useRouter()
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const [currentStep, setCurrentStep] = useState<Step>('username')
     const [data, setData] = useState<OnboardingData>({
         username: '',
@@ -61,20 +69,37 @@ export default function OnboardingPage() {
         }
     }
 
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click()
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setData(prev => ({ ...prev, avatar: reader.result as string }))
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
     return (
-        <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center p-6 font-sans">
+        <div className="min-h-screen bg-neutral-50/50 flex flex-col items-center justify-center p-6 font-sans antialiased">
             {/* Minimal Progress Bar */}
             {currentStep !== 'success' && (
                 <div className="w-full max-w-md mb-12">
                     <div className="flex justify-between items-center mb-4">
-                        <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Setup Progress</span>
-                        <span className="text-[11px] font-bold text-neutral-900 uppercase tracking-widest">{stepIndex + 1} / 4</span>
+                        <span className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Setup Progress</span>
+                        <Badge variant="secondary" className="bg-white border-neutral-100 text-neutral-500 font-black text-[10px] px-2 py-0.5 rounded-md">
+                            STEP {stepIndex + 1} OF 4
+                        </Badge>
                     </div>
                     <div className="flex gap-2">
                         {[0, 1, 2, 3].map((i) => (
                             <div
                                 key={i}
-                                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i <= stepIndex ? 'bg-[#4338CA]' : 'bg-neutral-200'}`}
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${i <= stepIndex ? 'bg-indigo-600 shadow-sm shadow-indigo-100' : 'bg-neutral-200'}`}
                             />
                         ))}
                     </div>
@@ -82,282 +107,222 @@ export default function OnboardingPage() {
             )}
 
             {/* Main Application Card */}
-            <div className="w-full max-w-2xl bg-white border border-neutral-200 rounded-[32px] shadow-sm overflow-hidden animate-in fade-in duration-500">
+            <div className="w-full max-w-2xl bg-white border border-neutral-200/60 rounded-[40px] shadow-2xl shadow-neutral-200/40 overflow-hidden animate-in fade-in zoom-in-95 duration-500">
 
                 {currentStep === 'username' && (
-                    <div className="p-12 md:p-16 text-center">
-                        <div className="w-16 h-16 bg-neutral-50 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-neutral-100 text-[#4338CA]">
-                            <AtSign size={32} />
+                    <div className="p-12 md:p-20 text-center animate-in slide-in-from-bottom-4 duration-500">
+                        <div className="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-10 border border-indigo-100/50 text-indigo-600 shadow-sm">
+                            <AtSign size={36} />
                         </div>
-                        <h1 className="text-2xl font-bold text-neutral-900 mb-2">Choose your username</h1>
-                        <p className="text-sm text-neutral-500 mb-10">This unique identifier will be visible to other members.</p>
+                        <h1 className="text-3xl font-bold text-neutral-900 mb-3 tracking-tight">Choose your username</h1>
+                        <p className="text-base text-neutral-500 mb-12 font-medium">This unique identifier will be visible to other members.</p>
 
-                        <div className="space-y-6 text-left">
-                            <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Username</label>
+                        <div className="space-y-8 text-left max-w-sm mx-auto">
+                            <div className="space-y-3">
+                                <Label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em] px-1">Username</Label>
                                 <div className="relative group">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 font-medium italic">@</span>
-                                    <input
+                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold z-10">@</span>
+                                    <Input
                                         type="text"
                                         placeholder="bright_corner"
                                         value={data.username}
                                         onChange={(e) => setData({ ...data, username: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
-                                        className="w-full pl-8 pr-12 py-4 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-900 outline-none focus:ring-2 focus:ring-[#4338CA]/20 focus:border-[#4338CA] transition-all"
+                                        className="w-full pl-10 h-16 bg-neutral-50 border-none ring-1 ring-neutral-200 focus-visible:ring-2 focus-visible:ring-indigo-600 rounded-2xl text-base font-bold text-neutral-900 transition-all placeholder:text-neutral-300"
                                     />
-                                    {data.username.length > 2 && (
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500">
-                                            <Check size={20} className="stroke-[3]" />
-                                        </div>
-                                    )}
                                 </div>
-                                {data.username.length > 2 && (
-                                    <p className="text-[11px] font-medium text-emerald-600">Username is available</p>
-                                )}
                             </div>
 
-                            <button
+                            <Button
                                 onClick={nextStep}
-                                className="w-full bg-[#4338CA] hover:bg-[#3730A3] text-white py-4 rounded-xl font-bold text-sm transition-all shadow-md shadow-indigo-100 active:scale-[0.98]"
+                                disabled={data.username.length < 3}
+                                className="w-full h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100 active:scale-[0.98] disabled:opacity-50"
                             >
                                 Continue to Profile
-                            </button>
-
-                            <p className="text-center">
-                                <button className="text-[11px] font-bold text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-widest">
-                                    Use email instead
-                                </button>
-                            </p>
+                            </Button>
                         </div>
                     </div>
                 )}
 
                 {currentStep === 'profile' && (
-                    <div className="p-12 md:p-16">
+                    <div className="p-12 md:p-20 animate-in slide-in-from-right-8 duration-500">
                         <div className="mb-12">
-                            <h1 className="text-2xl font-bold text-neutral-900 mb-2">Profile Setup</h1>
-                            <p className="text-sm text-neutral-500">Complete your professional profile details.</p>
+                            <h1 className="text-3xl font-bold text-neutral-900 mb-3 tracking-tight">Profile Setup</h1>
+                            <p className="text-base text-neutral-500 font-medium tracking-tight">Complete your professional profile details.</p>
                         </div>
 
-                        <div className="flex items-center gap-8 mb-12 pb-12 border-b border-neutral-100">
-                            <div className="relative">
-                                <div className="w-24 h-24 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center overflow-hidden">
-                                    <User size={40} className="text-neutral-300" />
-                                </div>
-                                <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white border border-neutral-200 rounded-lg flex items-center justify-center text-[#4338CA] shadow-sm hover:bg-neutral-50 transition-colors">
-                                    <Camera size={14} />
-                                </button>
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-sm font-bold text-neutral-900">Profile Picture</p>
-                                <p className="text-xs text-neutral-400 mb-3">PNG, JPG or GIF. Max 2MB.</p>
-                                <button className="text-xs font-bold text-[#4338CA] hover:underline">Replace image</button>
+                        <div className="flex justify-center items-center gap-8 mb-12 pb-12 border-b border-neutral-100">
+                            <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
+                                <Avatar className="w-28 h-28 rounded-3xl border-4 border-white shadow-xl bg-neutral-50 ring-1 ring-neutral-100 overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
+                                    <AvatarImage src={data.avatar || ''} className="object-cover" />
+                                    <AvatarFallback className="bg-neutral-50 text-neutral-300">
+                                        <User size={48} />
+                                    </AvatarFallback>
+                                </Avatar>
+                                <Button
+                                    size="icon"
+                                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-white border border-neutral-200 rounded-xl text-indigo-600 shadow-lg hover:bg-neutral-50 transition-all active:scale-[0.9]"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleAvatarClick()
+                                    }}
+                                >
+                                    <Camera size={18} />
+                                </Button>
                             </div>
                         </div>
 
-                        <div className="space-y-10">
+                        <div className="space-y-12">
                             <div className="space-y-3">
-                                <div className="flex justify-between items-end">
-                                    <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Bio</label>
-                                    <span className="text-[10px] font-bold text-neutral-300">
-                                        {data.bio.length}/160
-                                    </span>
+                                <div className="flex justify-between items-end px-1">
+                                    <Label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em]">Bio</Label>
                                 </div>
-                                <textarea
+                                <Textarea
                                     placeholder="Briefly describe your role or interests..."
                                     value={data.bio}
-                                    onChange={(e) => setData({ ...data, bio: e.target.value.slice(0, 160) })}
-                                    rows={3}
-                                    className="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4338CA]/20 focus:border-[#4338CA] transition-all text-sm font-medium placeholder:text-neutral-300 resize-none shadow-sm"
+                                    onChange={(e) => setData({ ...data, bio: e.target.value.slice(0, 1600) })}
+                                    className="w-full h-32 px-5 py-4 bg-neutral-50 border-none ring-1 ring-neutral-200 focus-visible:ring-2 focus-visible:ring-indigo-600 rounded-2xl text-base font-medium placeholder:text-neutral-300 resize-none transition-all shadow-sm"
                                 />
                             </div>
 
-                            <div className="space-y-4">
-                                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Display Preferences</label>
-
-                                <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl border border-neutral-100">
-                                    <div>
-                                        <p className="text-sm font-bold text-neutral-900">Online Status</p>
-                                        <p className="text-xs text-neutral-400">Manage visibility of your active state.</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setData({ ...data, onlineStatus: !data.onlineStatus })}
-                                        className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${data.onlineStatus ? 'bg-indigo-600' : 'bg-neutral-200'}`}
-                                    >
-                                        <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300 ${data.onlineStatus ? 'translate-x-5' : 'translate-x-0'}`} />
-                                    </button>
-                                </div>
-
-                                <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl border border-neutral-100">
-                                    <div>
-                                        <p className="text-sm font-bold text-neutral-900">Public Profile</p>
-                                        <p className="text-xs text-neutral-400">Make your profile discoverable to others.</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setData({ ...data, publicProfile: !data.publicProfile })}
-                                        className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${data.publicProfile ? 'bg-indigo-600' : 'bg-neutral-200'}`}
-                                    >
-                                        <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300 ${data.publicProfile ? 'translate-x-5' : 'translate-x-0'}`} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between pt-4">
-                                <button onClick={prevStep} className="text-[11px] font-bold text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-widest">Previous Step</button>
-                                <button
+                            <div className="flex items-center justify-between pt-6">
+                                <Button
+                                    variant="ghost"
+                                    onClick={prevStep}
+                                    className="text-[11px] font-black text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-[0.2em]"
+                                >
+                                    Previous Step
+                                </Button>
+                                <Button
                                     onClick={nextStep}
-                                    className="bg-[#4338CA] hover:bg-[#3730A3] text-white px-10 py-4 rounded-xl font-bold text-sm transition-all shadow-md active:scale-[0.98]"
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white h-16 px-12 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]"
                                 >
                                     Save & Continue
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
                 )}
 
                 {currentStep === 'privacy' && (
-                    <div className="p-12 md:p-16">
+                    <div className="p-12 md:p-20 animate-in slide-in-from-right-8 duration-500">
                         <div className="mb-12">
-                            <h1 className="text-2xl font-bold text-neutral-900 mb-2">Privacy Settings</h1>
-                            <p className="text-sm text-neutral-500">Configure your security and interaction boundaries.</p>
+                            <h1 className="text-3xl font-bold text-neutral-900 mb-3 tracking-tight">Privacy Settings</h1>
+                            <p className="text-base text-neutral-500 font-medium tracking-tight">Configure your security and interaction boundaries.</p>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="p-6 border border-neutral-100 rounded-2xl flex items-start gap-5 hover:border-neutral-200 transition-all">
-                                <div className="w-10 h-10 bg-neutral-50 rounded-xl flex items-center justify-center text-[#4338CA] shrink-0">
-                                    <EyeOff size={20} />
+                            <div className="p-6 bg-white border border-neutral-100 rounded-[32px] flex items-start gap-6 hover:border-neutral-200 transition-all shadow-xs group">
+                                <div className="w-12 h-12 bg-neutral-50 rounded-2xl flex items-center justify-center text-indigo-600 shrink-0 group-hover:scale-110 transition-transform">
+                                    <EyeOff size={24} />
                                 </div>
                                 <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <p className="text-sm font-bold text-neutral-900">Anonymous Mode</p>
-                                        <button
-                                            onClick={() => setData({ ...data, anonymousMode: !data.anonymousMode })}
-                                            className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${data.anonymousMode ? 'bg-indigo-600' : 'bg-neutral-200'}`}
-                                        >
-                                            <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300 ${data.anonymousMode ? 'translate-x-5' : 'translate-x-0'}`} />
-                                        </button>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                        <p className="text-base font-bold text-neutral-900 tracking-tight">Anonymous Mode</p>
+                                        <Switch
+                                            checked={data.anonymousMode}
+                                            onCheckedChange={(checked) => setData({ ...data, anonymousMode: checked })}
+                                            className="data-[state=checked]:bg-indigo-600"
+                                        />
                                     </div>
-                                    <p className="text-xs text-neutral-400 leading-relaxed">Hide your identity and profile picture in public channels by default.</p>
-                                </div>
-                            </div>
-
-                            <div className="p-6 border border-neutral-100 rounded-2xl space-y-6">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-10 h-10 bg-neutral-50 rounded-xl flex items-center justify-center text-[#4338CA] shrink-0">
-                                        <MessageSquare size={20} />
-                                    </div>
-                                    <p className="text-sm font-bold text-neutral-900">Direct Message Permissions</p>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pl-[60px]">
-                                    {(['everyone', 'contacts', 'nobody'] as const).map((option) => (
-                                        <button
-                                            key={option}
-                                            onClick={() => setData({ ...data, messagePrivacy: option })}
-                                            className={`py-3 px-4 rounded-xl border text-center transition-all ${data.messagePrivacy === option ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-neutral-100 bg-white text-neutral-500 hover:border-neutral-200'}`}
-                                        >
-                                            <span className="text-xs font-bold capitalize">{option}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="p-6 border border-neutral-100 rounded-2xl flex items-start gap-5 hover:border-neutral-200 transition-all">
-                                <div className="w-10 h-10 bg-neutral-50 rounded-xl flex items-center justify-center text-[#4338CA] shrink-0">
-                                    <Lock size={20} />
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <p className="text-sm font-bold text-neutral-900">PIN Protection</p>
-                                        <button
-                                            onClick={() => setData({ ...data, pinProtection: !data.pinProtection })}
-                                            className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${data.pinProtection ? 'bg-indigo-600' : 'bg-neutral-200'}`}
-                                        >
-                                            <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300 ${data.pinProtection ? 'translate-x-5' : 'translate-x-0'}`} />
-                                        </button>
-                                    </div>
-                                    <p className="text-xs text-neutral-400">Require a secure PIN to access the application.</p>
+                                    <p className="text-sm text-neutral-400 leading-relaxed font-medium">Hide your identity and profile picture in public channels by default.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-12">
-                            <button onClick={prevStep} className="text-[11px] font-bold text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-widest">Previous Step</button>
-                            <button
+                        <div className="flex items-center justify-between pt-16">
+                            <Button
+                                variant="ghost"
+                                onClick={prevStep}
+                                className="text-[11px] font-black text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-[0.2em]"
+                            >
+                                Previous Step
+                            </Button>
+                            <Button
                                 onClick={nextStep}
-                                className="bg-[#4338CA] hover:bg-[#3730A3] text-white px-10 py-4 rounded-xl font-bold text-sm transition-all"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white h-16 px-12 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100"
                             >
                                 Continue to Notifications
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
 
                 {currentStep === 'notifications' && (
-                    <div className="p-12 md:p-16">
+                    <div className="p-12 md:p-20 animate-in slide-in-from-right-8 duration-500">
                         <div className="mb-12">
-                            <h1 className="text-2xl font-bold text-neutral-900 mb-2">Notifications</h1>
-                            <p className="text-sm text-neutral-500">Select how you want to be alerted about activity.</p>
+                            <h1 className="text-3xl font-bold text-neutral-900 mb-3 tracking-tight">Notifications</h1>
+                            <p className="text-base text-neutral-500 font-medium tracking-tight">Select how you want to be alerted about activity.</p>
                         </div>
 
-                        <div className="divide-y divide-neutral-100">
+                        <div className="space-y-4">
                             {[
-                                { id: 'emailNotifications', label: 'Email Notifications', desc: 'New messages, mentions and security alerts.' },
-                                { id: 'channelMentions', label: 'Channel Mentions', desc: 'Direct @mentions and replies in channels.' },
-                                { id: 'pinAlerts', label: 'PIN Message Alerts', desc: 'When you are added to prioritized chats.' },
-                                { id: 'joinRequestAlerts', label: 'Join Request Alerts', desc: 'When somebody requests to join your channels.' },
+                                { id: 'emailNotifications', icon: <Mail size={20} />, label: 'Email Notifications', desc: 'New messages, mentions and security alerts.' },
+                                { id: 'channelMentions', icon: <AtSign size={20} />, label: 'Channel Mentions', desc: 'Direct @mentions and replies in channels.' },
+                                { id: 'pinAlerts', icon: <Smartphone size={20} />, label: 'PIN Message Alerts', desc: 'When you are added to prioritized chats.' },
+                                { id: 'joinRequestAlerts', icon: <Shield size={20} />, label: 'Join Request Alerts', desc: 'When somebody requests to join your channels.' },
                             ].map((item) => (
-                                <div key={item.id} className="flex items-center justify-between py-6">
-                                    <div className="space-y-1">
-                                        <p className="text-sm font-bold text-neutral-900">{item.label}</p>
-                                        <p className="text-xs text-neutral-400">{item.desc}</p>
+                                <div key={item.id} className="flex items-center justify-between p-6 bg-white rounded-[32px] border border-neutral-100 hover:border-neutral-200 transition-colors shadow-xs group">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-10 h-10 bg-neutral-50 rounded-xl flex items-center justify-center text-neutral-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
+                                            {item.icon}
+                                        </div>
+                                        <div className="space-y-0.5">
+                                            <p className="text-base font-bold text-neutral-900 tracking-tight">{item.label}</p>
+                                            <p className="text-xs text-neutral-400 font-medium">{item.desc}</p>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={() => setData({ ...data, [item.id]: !data[item.id as keyof OnboardingData] })}
-                                        className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${data[item.id as keyof OnboardingData] ? 'bg-indigo-600' : 'bg-neutral-200'}`}
-                                    >
-                                        <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300 ${data[item.id as keyof OnboardingData] ? 'translate-x-5' : 'translate-x-0'}`} />
-                                    </button>
+                                    <Switch
+                                        checked={data[item.id as keyof OnboardingData] as boolean}
+                                        onCheckedChange={(checked) => setData({ ...data, [item.id]: checked })}
+                                        className="data-[state=checked]:bg-indigo-600"
+                                    />
                                 </div>
                             ))}
                         </div>
 
-                        <div className="flex items-center justify-between pt-12">
-                            <button onClick={prevStep} className="text-[11px] font-bold text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-widest">Adjust previous</button>
-                            <button
+                        <div className="flex items-center justify-between pt-16">
+                            <Button
+                                variant="ghost"
+                                onClick={prevStep}
+                                className="text-[11px] font-black text-neutral-400 hover:text-neutral-600 transition-colors uppercase tracking-[0.2em]"
+                            >
+                                Adjust previous
+                            </Button>
+                            <Button
                                 onClick={nextStep}
-                                className="bg-[#4338CA] hover:bg-[#3730A3] text-white px-10 py-4 rounded-xl font-bold text-sm transition-all shadow-md shadow-indigo-100"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white h-16 px-12 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100"
                             >
                                 Finish Setup
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
 
                 {currentStep === 'success' && (
-                    <div className="p-16 md:p-24 text-center">
-                        <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-10 border border-emerald-100">
-                            <Check className="text-emerald-500 stroke-[3]" size={40} />
+                    <div className="p-16 md:p-32 text-center animate-in zoom-in duration-700">
+                        <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-10 border-4 border-white shadow-xl shadow-emerald-100 ring-1 ring-emerald-100">
+                            <Check className="text-emerald-500 stroke-[4]" size={40} />
                         </div>
 
-                        <h1 className="text-3xl font-bold text-neutral-900 mb-4 tracking-tight">You&apos;re all set</h1>
-                        <p className="text-base text-neutral-500 font-medium mb-16 max-w-sm mx-auto">Your professional profile is active. Welcome to BrightCorner.</p>
+                        <h1 className="text-4xl font-black text-neutral-900 mb-4 tracking-tight">You&apos;re all set</h1>
+                        <p className="text-lg text-neutral-500 font-medium mb-16 max-w-sm mx-auto leading-relaxed">Your professional profile is active. Welcome to BrightCorner.</p>
 
-                        <div className="space-y-4 max-w-sm mx-auto">
-                            <Link href="/chat">
-                                <button className="w-full bg-[#4338CA] hover:bg-[#3730A3] text-white py-5 rounded-xl font-bold text-sm transition-all shadow-md">
+                        <div className="max-w-xs mx-auto">
+                            <Link href="/chat" className="block">
+                                <Button className="w-full h-18 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-base transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98]">
                                     Continue to Dashboard
-                                </button>
+                                </Button>
                             </Link>
                         </div>
                     </div>
                 )}
-            </div>
-
-            {/* Subtle Footer */}
-            <div className="mt-12 text-center">
-                <p className="text-[10px] font-bold text-neutral-300 uppercase tracking-[0.3em]">
-                    BrightCorner &copy; 2026 Secured Enterprise Space
-                </p>
             </div>
         </div>
     )

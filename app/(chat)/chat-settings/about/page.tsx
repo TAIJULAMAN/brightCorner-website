@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Shield, Globe, Users, Target, Zap, Lock, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 export default function AboutUsPage() {
     const stats = [
@@ -65,6 +66,17 @@ export default function AboutUsPage() {
                                 <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">{stat.label}</p>
                             </div>
                         ))}
+                    </div>
+
+                    <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+                        <Button className="h-10 px-6 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors">
+                            View Careers
+                        </Button>
+                        <Button variant="outline" asChild className="h-10 px-6 rounded-xl bg-white border border-indigo-200 text-indigo-600 text-xs font-bold hover:bg-indigo-50 transition-colors">
+                            <Link href="/chat-settings/contact">
+                                Contact Team
+                            </Link>
+                        </Button>
                     </div>
 
                     {/* Mission Section */}

@@ -1,10 +1,22 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X, Check, MessageSquare, Lock, Info, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 type Step = 'select-user' | 'choose-type' | 'secure-chat'
 
@@ -78,8 +90,7 @@ export default function NewMessagePage() {
     const [activeFilter, setActiveFilter] = useState('Suggested')
     const [messageType, setMessageType] = useState<'regular' | 'private' | null>(null)
     const [pinEnabled, setPinEnabled] = useState(true)
-    const [pin, setPin] = useState(['', '', '', ''])
-    const pinInputs = useRef<(HTMLInputElement | null)[]>([])
+    const [pinValue, setPinValue] = useState("")
 
     const selectedUser = USER_REGISTRY.find(u => u.id === selectedUserId)
     const filters = ['Suggested', 'Design Team', 'Engineering']
@@ -97,23 +108,6 @@ export default function NewMessagePage() {
         return list
     }, [activeFilter, searchQuery])
 
-    const handlePinChange = (index: number, value: string) => {
-        if (!/^\d*$/.test(value)) return
-        const newPin = [...pin]
-        newPin[index] = value.slice(-1)
-        setPin(newPin)
-
-        if (value && index < 3) {
-            pinInputs.current[index + 1]?.focus()
-        }
-    }
-
-    const handlePinKeyDown = (index: number, e: React.KeyboardEvent) => {
-        if (e.key === 'Backspace' && !pin[index] && index > 0) {
-            pinInputs.current[index - 1]?.focus()
-        }
-    }
-
     return (
         <div className="flex-1 flex flex-col bg-white overflow-hidden animate-in fade-in duration-500 relative">
 
@@ -123,21 +117,21 @@ export default function NewMessagePage() {
                     <header className="px-10 pt-12 pb-8 flex items-center justify-between">
                         <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">New Message</h1>
                         <Link href="/chat">
-                            <button className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+                            <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-neutral-600 rounded-xl">
                                 <X size={24} />
-                            </button>
+                            </Button>
                         </Link>
                     </header>
 
                     <div className="px-10 pb-8 space-y-6">
                         <div className="relative group">
                             <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-[#4338CA] transition-colors" size={20} />
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Search people..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-8 pr-4 py-4 bg-transparent border-b border-neutral-100 outline-none focus:border-[#4338CA] transition-all text-base font-medium placeholder:text-neutral-300"
+                                className="w-full pl-8 h-14 bg-transparent border-none border-b border-neutral-100 focus:border-[#4338CA] focus:ring-0 rounded-none transition-all text-base font-medium placeholder:text-neutral-300"
                             />
                         </div>
                         <div className="flex gap-3">
@@ -159,13 +153,16 @@ export default function NewMessagePage() {
                             <h2 className="text-[10px] font-black text-neutral-300 uppercase tracking-[0.3em]">{activeFilter === 'Suggested' ? 'Suggested' : 'Team Members'}</h2>
                             <div className="space-y-4">
                                 {filteredUsers.map((user) => (
-                                    <div key={user.id} onClick={() => setSelectedUserId(user.id)} className={`group flex items-center justify-between p-4 rounded-[24px] cursor-pointer transition-all duration-300 border-2 ${selectedUserId === user.id ? 'bg-cyan-50/30 border-cyan-400/50' : 'bg-transparent border-transparent hover:bg-neutral-50/50'}`}>
+                                    <div key={user.id} onClick={() => setSelectedUserId(user.id)} className={`group flex items-center justify-between p-4 rounded-[32px] cursor-pointer transition-all duration-300 border-2 ${selectedUserId === user.id ? 'bg-indigo-50/50 border-indigo-100' : 'bg-transparent border-transparent hover:bg-neutral-50/50'}`}>
                                         <div className="flex items-center gap-4">
                                             <div className="relative">
-                                                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-sm ring-2 ring-neutral-50 bg-neutral-100">
-                                                    {user.avatar ? <Image src={user.avatar} alt={user.name} width={56} height={56} className="object-cover" /> : <div className="h-full flex items-center justify-center text-neutral-400 font-bold text-lg">{user.name.split(' ').map(n => n[0]).join('')}</div>}
-                                                </div>
-                                                {user.status === 'online' && <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full" />}
+                                                <Avatar className="w-14 h-14 rounded-2xl border-2 border-white shadow-sm transition-transform group-hover:scale-105">
+                                                    <AvatarImage src={user.avatar} className="object-cover" />
+                                                    <AvatarFallback className="bg-neutral-100 text-neutral-500 font-bold uppercase">
+                                                        {user.name.split(' ').map(n => n[0]).join('')}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                {user.status === 'online' && <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full z-10" />}
                                             </div>
                                             <div>
                                                 <p className="text-base font-bold text-neutral-900 leading-tight">{user.name}</p>
@@ -182,9 +179,13 @@ export default function NewMessagePage() {
                     </div>
 
                     <div className="absolute bottom-10 right-10">
-                        <button onClick={() => setCurrentStep('choose-type')} disabled={!selectedUserId} className="px-16 py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]">
+                        <Button
+                            onClick={() => setCurrentStep('choose-type')}
+                            disabled={!selectedUserId}
+                            className="h-14 px-16 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]"
+                        >
                             Next
-                        </button>
+                        </Button>
                     </div>
                 </>
             )}
@@ -192,7 +193,14 @@ export default function NewMessagePage() {
             {/* --- STEP 2: CHOOSE MESSAGE TYPE --- */}
             {currentStep === 'choose-type' && (
                 <div className="flex-1 flex flex-col items-center justify-center p-10 bg-neutral-50/30 animate-in slide-in-from-right-8 duration-500">
-                    <button onClick={() => setCurrentStep('select-user')} className="absolute top-12 left-10 p-2 text-neutral-400 hover:text-neutral-600"><ChevronLeft size={24} /></button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setCurrentStep('select-user')}
+                        className="absolute top-12 left-10 text-neutral-400 hover:text-neutral-600 rounded-xl"
+                    >
+                        <ChevronLeft size={24} />
+                    </Button>
 
                     <div className="text-center mb-16 space-y-3">
                         <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Choose Message Type</h1>
@@ -202,10 +210,10 @@ export default function NewMessagePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
                         <div
                             onClick={() => setMessageType('regular')}
-                            className={`p-10 bg-white border-2 rounded-[32px] cursor-pointer transition-all duration-300 text-center space-y-6 ${messageType === 'regular' ? 'border-[#4338CA] ring-8 ring-indigo-50 shadow-xl' : 'border-neutral-100 hover:border-neutral-200 shadow-sm'}`}
+                            className={`p-10 bg-white border-2 rounded-[40px] cursor-pointer transition-all duration-500 text-center space-y-6 ${messageType === 'regular' ? 'border-indigo-600 ring-8 ring-indigo-50 shadow-2xl scale-[1.02]' : 'border-neutral-100 hover:border-neutral-300 shadow-sm'}`}
                         >
-                            <div className="w-16 h-16 bg-neutral-50 rounded-2xl flex items-center justify-center mx-auto text-neutral-400">
-                                <MessageSquare size={32} />
+                            <div className="w-20 h-20 bg-neutral-50 rounded-3xl flex items-center justify-center mx-auto text-neutral-400 group-hover:scale-110 transition-transform">
+                                <MessageSquare size={36} />
                             </div>
                             <div className="space-y-2">
                                 <h3 className="text-xl font-bold text-neutral-900">Regular</h3>
@@ -215,20 +223,20 @@ export default function NewMessagePage() {
 
                         <div
                             onClick={() => setMessageType('private')}
-                            className={`relative p-10 bg-white border-2 rounded-[32px] cursor-pointer transition-all duration-300 text-center space-y-6 ${messageType === 'private' ? 'border-cyan-400 ring-8 ring-cyan-50 shadow-xl' : 'border-neutral-100 hover:border-neutral-200 shadow-sm'}`}
+                            className={`relative p-10 bg-white border-2 rounded-[40px] cursor-pointer transition-all duration-500 text-center space-y-6 ${messageType === 'private' ? 'border-cyan-400 ring-8 ring-cyan-50 shadow-2xl scale-[1.02]' : 'border-neutral-100 hover:border-neutral-300 shadow-sm'}`}
                         >
                             {messageType === 'private' && (
-                                <div className="absolute top-6 right-6 w-6 h-6 bg-[#4338CA] rounded-full flex items-center justify-center shadow-lg animate-in zoom-in">
-                                    <Check size={14} className="text-white stroke-[4]" />
+                                <div className="absolute top-8 right-8 w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center shadow-lg animate-in zoom-in">
+                                    <Check size={18} className="text-white stroke-[4]" />
                                 </div>
                             )}
-                            <div className="w-16 h-16 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto text-cyan-500">
-                                <Lock size={32} />
+                            <div className="w-20 h-20 bg-cyan-50 rounded-3xl flex items-center justify-center mx-auto text-cyan-500">
+                                <Lock size={36} />
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-center gap-2">
                                     <h3 className="text-xl font-bold text-neutral-900">Private</h3>
-                                    <span className="px-2 py-0.5 bg-cyan-100 text-cyan-600 text-[10px] font-black uppercase tracking-widest rounded-md">PIN</span>
+                                    <Badge variant="secondary" className="bg-cyan-100 text-cyan-600 font-black px-2 py-0.5 rounded-md text-[10px]">PIN</Badge>
                                 </div>
                                 <p className="text-sm text-neutral-400 leading-relaxed font-medium px-4">Protected with a PIN code for sensitive financial data.</p>
                             </div>
@@ -236,14 +244,20 @@ export default function NewMessagePage() {
                     </div>
 
                     <div className="w-full max-w-2xl flex items-center justify-between mt-20">
-                        <button onClick={() => setCurrentStep('select-user')} className="text-sm font-bold text-neutral-400 hover:text-neutral-600">Cancel</button>
-                        <button
+                        <Button
+                            variant="ghost"
+                            onClick={() => setCurrentStep('select-user')}
+                            className="text-sm font-bold text-neutral-400 hover:text-neutral-600 rounded-xl"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
                             onClick={() => messageType === 'private' ? setCurrentStep('secure-chat') : router.push('/chat')}
                             disabled={!messageType}
-                            className="px-20 py-5 bg-[#4338CA] hover:bg-[#3730A3] disabled:opacity-50 text-white rounded-2xl font-bold text-base transition-all shadow-xl shadow-indigo-100"
+                            className="h-16 px-20 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-2xl font-bold text-base transition-all shadow-xl shadow-indigo-100"
                         >
                             Continue
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -251,83 +265,97 @@ export default function NewMessagePage() {
             {/* --- STEP 3: START SECURE CHAT --- */}
             {currentStep === 'secure-chat' && (
                 <div className="flex-1 flex flex-col items-center justify-center p-10 bg-neutral-50/20 animate-in slide-in-from-right-8 duration-500 overflow-y-auto">
-                    <button onClick={() => setCurrentStep('choose-type')} className="absolute top-12 left-10 p-2 text-neutral-400 hover:text-neutral-600"><ChevronLeft size={24} /></button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setCurrentStep('choose-type')}
+                        className="absolute top-12 left-10 text-neutral-400 hover:text-neutral-600 rounded-xl"
+                    >
+                        <ChevronLeft size={24} />
+                    </Button>
 
                     <div className="text-center mb-16 space-y-3">
                         <h1 className="text-4xl font-bold text-neutral-900 tracking-tight">Start Secure Chat</h1>
-                        <p className="text-neutral-500 font-medium tracking-tight">Select a colleague and set up access controls.</p>
+                        <p className="text-neutral-500 font-medium tracking-tight">Set up access controls with your colleague.</p>
                     </div>
 
                     <div className="w-full max-w-lg space-y-12">
                         {/* Recipient Card */}
                         <div className="space-y-4">
-                            <label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em]">Recipient</label>
-                            <div className="flex items-center gap-4 p-5 bg-neutral-100/50 rounded-2xl border border-neutral-100">
-                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                                    <Image src={selectedUser?.avatar || ''} alt={selectedUser?.name || ''} width={48} height={48} className="object-cover" />
-                                </div>
+                            <Label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em] px-1">Recipient</Label>
+                            <div className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-neutral-100 shadow-xs">
+                                <Avatar className="w-14 h-14 rounded-2xl border-2 border-neutral-50 bg-neutral-50 shadow-sm">
+                                    <AvatarImage src={selectedUser?.avatar} className="object-cover" />
+                                    <AvatarFallback className="bg-neutral-100 text-neutral-500 font-bold">
+                                        {selectedUser?.name.split(' ').map(n => n[0]).join('')}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div>
-                                    <p className="text-base font-bold text-neutral-900 leading-tight">{selectedUser?.name}</p>
+                                    <p className="text-lg font-bold text-neutral-900 leading-tight">{selectedUser?.name}</p>
                                     <p className="text-xs text-neutral-400 font-medium">{selectedUser?.role}</p>
                                 </div>
-                                <div className="ml-auto w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                                <div className="ml-auto flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                                    <span className="text-[10px] font-bold text-emerald-500 uppercase">Online</span>
+                                </div>
                             </div>
                         </div>
 
                         {/* PIN Toggle */}
-                        <div className="flex items-center justify-between pb-8 border-b border-neutral-100">
-                            <div>
-                                <p className="text-lg font-bold text-neutral-900 tracking-tight">Enable PIN Protection</p>
+                        <div className="flex items-center justify-between p-6 bg-white rounded-3xl border border-neutral-100 shadow-xs">
+                            <div className="space-y-1">
+                                <p className="text-lg font-bold text-neutral-900 tracking-tight">PIN Protection</p>
                                 <p className="text-sm text-neutral-400 font-medium">Require a code to read messages</p>
                             </div>
-                            <button
-                                onClick={() => setPinEnabled(!pinEnabled)}
-                                className={`w-14 h-8 rounded-full p-1 transition-all duration-500 flex items-center ${pinEnabled ? 'bg-indigo-600 shadow-lg shadow-indigo-100' : 'bg-neutral-200'}`}
-                            >
-                                <div className={`w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center transition-all duration-500 ${pinEnabled ? 'translate-x-6' : 'translate-x-0'}`}>
-                                    {pinEnabled && <Check size={12} className="text-indigo-600 stroke-[4]" />}
-                                </div>
-                            </button>
+                            <Switch
+                                checked={pinEnabled}
+                                onCheckedChange={setPinEnabled}
+                                className="data-[state=checked]:bg-indigo-600"
+                            />
                         </div>
 
                         {/* PIN Inputs */}
                         {pinEnabled && (
-                            <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                                <label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em]">Create PIN</label>
-                                <div className="flex gap-4 justify-between">
-                                    {pin.map((digit, idx) => (
-                                        <input
-                                            key={idx}
-                                            ref={el => pinInputs.current[idx] = el}
-                                            type="text"
-                                            maxLength={1}
-                                            value={digit}
-                                            onChange={(e) => handlePinChange(idx, e.target.value)}
-                                            onKeyDown={(e) => handlePinKeyDown(idx, e)}
-                                            className={`w-full h-16 text-center text-2xl font-bold bg-white border-2 rounded-2xl focus:outline-none focus:ring-4 transition-all ${digit ? 'border-[#4338CA] ring-indigo-50' : 'border-neutral-100 hover:border-neutral-200 focus:border-cyan-400 focus:ring-cyan-50'}`}
-                                            placeholder="•"
-                                        />
-                                    ))}
+                            <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                                <Label className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em] px-1">Create Access PIN</Label>
+                                <div className="flex justify-center">
+                                    <InputOTP
+                                        maxLength={4}
+                                        value={pinValue}
+                                        onChange={setPinValue}
+                                        containerClassName="gap-4"
+                                    >
+                                        <InputOTPGroup className="gap-4">
+                                            {[0, 1, 2, 3].map((index) => (
+                                                <InputOTPSlot
+                                                    key={index}
+                                                    index={index}
+                                                    className="w-16 h-16 text-2xl font-bold bg-white border-2 rounded-2xl focus-visible:ring-indigo-50 data-[active=true]:border-indigo-600 shadow-sm"
+                                                />
+                                            ))}
+                                        </InputOTPGroup>
+                                    </InputOTP>
                                 </div>
                             </div>
                         )}
 
                         {/* Info Tip */}
-                        <div className="flex items-start gap-4 p-6 bg-neutral-100/50 rounded-2xl border border-neutral-100">
-                            <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
-                                <Info size={16} className="text-neutral-500" />
+                        <div className="flex items-start gap-4 p-6 bg-indigo-50/50 rounded-3xl border border-indigo-100/50">
+                            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm">
+                                <Info size={20} className="text-indigo-500" />
                             </div>
-                            <p className="text-xs text-neutral-400 leading-relaxed font-medium">
-                                <span className="text-neutral-500 font-bold">Security Tip:</span> Make sure to share this PIN with the recipient via a different channel (e.g., in person or voice call).
+                            <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+                                <span className="text-indigo-600 font-bold">Security Note:</span> Please share this PIN securely with {selectedUser?.name.split(' ')[0]} via a verified secondary channel.
                             </p>
                         </div>
 
-                        <button
+                        <Button
                             onClick={() => router.push('/chat')}
-                            className="w-full bg-[#4338CA] hover:bg-[#3730A3] text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98]"
+                            disabled={pinEnabled && pinValue.length < 4}
+                            className="w-full h-18 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl font-bold text-lg transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98]"
                         >
-                            Start Conversation
-                        </button>
+                            Start Secure Conversation
+                        </Button>
                     </div>
                 </div>
             )}
