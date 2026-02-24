@@ -131,10 +131,12 @@ export function Sidebar() {
 
             {activeTab === 'dms' && (
                 <div className="p-4 bg-white border-t border-neutral-100">
-                    <button className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
-                        <Plus size={18} />
-                        New Message
-                    </button>
+                    <Link href="/new-message">
+                        <button className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-indigo-600 rounded-xl text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
+                            <Plus size={18} />
+                            New Message
+                        </button>
+                    </Link>
                 </div>
             )}
 
@@ -153,9 +155,11 @@ export function Sidebar() {
                         <p className="text-[10px] text-neutral-400">Online</p>
                     </div>
                 </div>
-                <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
-                    <Settings size={18} />
-                </button>
+                <Link href="/chat-settings">
+                    <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
+                        <Settings size={18} />
+                    </button>
+                </Link>
             </div>
         </aside>
     )
